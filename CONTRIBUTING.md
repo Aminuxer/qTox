@@ -276,7 +276,7 @@ https://help.github.com/articles/signing-commits-using-gpg/
 And *tl;dr* version:
 
 ```sh
-gpg --gen-key
+gpg --gen-key <your key ID> rsa4096 - never
 gpg --send-keys <your generated key ID>
 git config --local commit.gpgsign true
 # also force signing tags

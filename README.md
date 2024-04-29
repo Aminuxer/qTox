@@ -126,7 +126,13 @@ There are [IRC logs] available.
 List of GPG fingerprints used by qTox developers to sign commits, merges, tags,
 and possibly other stuff.
 
-Active qTox maintainers:
+Active UNOFFICIAL qTox maintainers:
+
+```
+CFA5 CB77 2F7D E019 7730  582B B78E 557B A91E D550      - nickolay168
+```
+
+Past qTox maintainers:
 
 ```
 7EB3 39FE 8817 47E7 01B7  D472 EBE3 6E66 A842 9B99      - Anthony Bilinski
@@ -135,11 +141,6 @@ CA92 21C5 389B 7C50 AA5F  7793 52A5 0775 BE13 DF17      - noavarice
 DA26 2CC9 3C0E 1E52 5AD2  1C85 9677 5D45 4B8E BF44      – sudden6
 141C 880E 8BA2 5B19 8D0F  850F 7C13 2143 C1A3 A7D4      – tox-user
 2880 C860 D95C 909D 3DA4  5C68 7E08 6DD6 6126 3264      – tux3
-```
-
-Past qTox maintainers:
-
-```
 C7A2 552D 0B25 0F98 3827  742C 1332 03A3 AC39 9151      – initramfs
 BA78 83E2 2F9D 3594 5BA3  3760 5313 7C30 33F0 9008      – zetok
 F365 8D0A 04A5 76A4 1072  FC0D 296F 0B76 4741 106C      – agilob
