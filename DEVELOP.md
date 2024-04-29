@@ -11,7 +11,7 @@ dnf provides /usr/lib64/cmake/XXXX
 The next packages are required to develop qTox:
 
 ```bash
-dnf install cmake qt5-qtbase-devel qt5-linguist qt5-qtsvg-devel toxcore-devel libasan libavcodec-free-devel libavdevice-free-devel libavformat-free-devel libavutil-free-devel libavif-devel qrencode-devel libsodium-devel libswscale-free-devel sqlcipher-devel libvpx-devel libexif-devel kf5-sonnet-devel openal-soft-devel libXScrnSaver-devel rpm-build
+dnf install cmake qt5-qtbase-devel qt5-linguist qt5-qtsvg-devel toxcore-devel libasan libavcodec-free-devel libavdevice-free-devel libavformat-free-devel libavutil-free-devel libavif-devel qrencode-devel libsodium-devel libswscale-free-devel sqlcipher-devel libvpx-devel libexif-devel kf5-sonnet-devel openal-soft-devel libXScrnSaver-devel rpm-build rpm-sign
 ```
 
 ## Build toxext
@@ -36,4 +36,15 @@ After `toxext` build the `tox_extension_messages`. [Original location](https://g
 cmake -G "Eclipse CDT4 - Unix Makefiles" ./
 make ToxExt
 sudo make install
+```
+
+## Finally build qTox and create RPM package
+This section is valid for Fedora Linux only.
+
+```bash
+export VERSION="1.17.6"
+cmake -G "Eclipse CDT4 - Unix Makefiles" ./
+make package
+rpm --addsign qtox-${VERSION}-fc40.x86_64.rpm
+rpm --checksig qtox-${VERSION}-fc40.x86_64.rpm
 ```

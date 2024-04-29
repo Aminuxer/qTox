@@ -652,6 +652,7 @@ target_link_libraries(${PROJECT_NAME}
 
 include(Testing)
 include(Installation)
+include(Package)
 
 if (DEFINED ENV{IN_NIX_SHELL})
   # the qtox binary must be "wrapped" to find the Qt platform plugin
