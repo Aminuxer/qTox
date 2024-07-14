@@ -553,8 +553,7 @@ void CoreFile::onFileRecvChunkCallback(Tox* tox, uint32_t friendId, uint32_t fil
         file->status = ToxFile::FINISHED;
         if (file->fileKind == TOX_FILE_KIND_AVATAR) {
             QPixmap pic;
-            pic.loadFromData(file->avatarData);
-            if (!pic.isNull()) {
+            if (pic.loadFromData(file->avatarData)) {
                 qDebug() << "Got" << file->avatarData.size() << "bytes of avatar data from" << friendId;
                 emit core->friendAvatarChanged(core->getFriendPublicKey(friendId), file->avatarData);
             }
