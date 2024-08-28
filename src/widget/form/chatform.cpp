@@ -225,6 +225,7 @@ ChatForm::ChatForm(Profile& profile_, Friend* chatFriend, IChatLog& chatLog_,
 
 ChatForm::~ChatForm()
 {
+    typingTimer.stop();
     Translator::unregister(this);
 }
 

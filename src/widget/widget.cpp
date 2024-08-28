@@ -634,10 +634,6 @@ Widget::~Widget()
         removeFriend(f, true);
     }
 
-    for (auto form : chatForms) {
-        delete form;
-    }
-
     delete profileForm;
     delete profileInfo;
     delete addFriendForm;
@@ -1189,7 +1185,7 @@ void Widget::addFriend(uint32_t friendId, const ToxPk& friendPk)
     friendChatLogs[friendPk] = chatHistory;
     friendChatrooms[friendPk] = chatroom;
     friendWidgets[friendPk] = widget;
-    chatForms[friendPk] = friendForm;
+    chatForms[friendPk] = QSharedPointer<ChatForm>(friendForm);
 
     const auto activityTime = settings.getFriendActivity(friendPk);
     const auto chatTime = friendForm->getLatestTime();
@@ -1368,7 +1364,7 @@ void Widget::openDialog(GenericChatroomWidget* widget, bool newWindow)
     const Group* group = widget->getGroup();
     bool chatFormIsSet;
     if (frnd) {
-        form = chatForms[frnd->getPublicKey()];
+        form = chatForms[frnd->getPublicKey()].data();
         contentDialogManager->focusChat(frnd->getPersistentId());
         chatFormIsSet = contentDialogManager->chatWidgetExists(frnd->getPersistentId());
     } else {
@@ -1470,7 +1466,7 @@ void Widget::addFriendDialog(const Friend* frnd, ContentDialog* dialog)
         onAddClicked();
     }
 
-    auto form = chatForms[friendPk];
+    auto form = chatForms[friendPk].data();
     auto chatroom = friendChatrooms[friendPk];
     FriendWidget* friendWidget =
         contentDialogManager->addFriendToDialog(dialog, chatroom, form);
@@ -1793,9 +1789,13 @@ void Widget::removeFriend(Friend* f, bool fake)
 
     friendWidgets.remove(friendPk);
 
-    auto chatForm = chatForms[friendPk];
+    std::map<ToxPk, std::unique_ptr<QTimer>>::iterator itTimer = negotiateTimers.find(friendPk);
+    if (itTimer != negotiateTimers.end()){
+    	//Deactivate and remove timer.
+    	itTimer->second->stop();
+    	negotiateTimers.erase(itTimer);
+    }
     chatForms.remove(friendPk);
-    delete chatForm;
 
     delete f;
     if (contentLayout && contentLayout->mainHead->layout()->isEmpty()) {

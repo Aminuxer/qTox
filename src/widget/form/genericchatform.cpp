@@ -284,6 +284,12 @@ GenericChatForm::GenericChatForm(const Core& core_, const Chat* chat, IChatLog& 
 
 GenericChatForm::~GenericChatForm()
 {
+#ifdef SPELL_CHECKING
+    if (decorator != nullptr) {
+    	delete decorator;
+    	decorator = nullptr;
+    }
+#endif
     Translator::unregister(this);
     delete searchForm;
 }

@@ -360,7 +360,7 @@ private:
     QMap<ToxPk, QMetaObject::Connection> friendAlertConnections;
     QMap<ToxPk, std::shared_ptr<ChatHistory>> friendChatLogs;
     QMap<ToxPk, std::shared_ptr<FriendChatroom>> friendChatrooms;
-    QMap<ToxPk, ChatForm*> chatForms;
+    QMap<ToxPk, QSharedPointer<ChatForm>> chatForms;
     std::map<ToxPk, std::unique_ptr<QTimer>> negotiateTimers;
 
     QMap<GroupId, GroupWidget*> groupWidgets;
