@@ -78,6 +78,7 @@
 CoreAV::CoreAV(std::unique_ptr<ToxAV, ToxAVDeleter> toxav_, CompatibleRecursiveMutex& toxCoreLock,
                IAudioSettings& audioSettings_, IGroupSettings& groupSettings_, CameraSource& cameraSource_)
     : audio{nullptr}
+    , isCancelling(false)
     , toxav{std::move(toxav_)}
     , coreavThread{new QThread{this}}
     , iterateTimer{new QTimer{this}}
@@ -88,7 +89,6 @@ CoreAV::CoreAV(std::unique_ptr<ToxAV, ToxAVDeleter> toxav_, CompatibleRecursiveM
 {
     assert(coreavThread);
     assert(iterateTimer);
-    isCancelling = false;
 
     coreavThread->setObjectName("qTox CoreAV");
     moveToThread(coreavThread.get());
@@ -874,7 +874,7 @@ void CoreAV::audioFrameCallback(ToxAV* toxAV, uint32_t friendNum, const int16_t*
     std::ignore = toxAV;
     CoreAV* self = static_cast<CoreAV*>(vSelf);
     // If call is cancelling just return
-    if (&self->isCancelling)
+    if (*&self->isCancelling)
         return;
     // This callback should come from the CoreAV thread
     assert(QThread::currentThread() == self->coreavThread.get());
@@ -901,7 +901,7 @@ void CoreAV::videoFrameCallback(ToxAV* toxAV, uint32_t friendNum, uint16_t w, ui
     std::ignore = toxAV;
     auto self = static_cast<CoreAV*>(vSelf);
     // If call is cancelling just return
-    if (&self->isCancelling)
+    if (*&self->isCancelling)
         return;
     // This callback should come from the CoreAV thread
     assert(QThread::currentThread() == self->coreavThread.get());
