@@ -45,6 +45,8 @@ This section is valid for Fedora Linux only.
 export VERSION="1.17.6"
 cmake -G "Eclipse CDT4 - Unix Makefiles" ./
 make package
-rpm --addsign qtox-${VERSION}-fc40.x86_64.rpm
-rpm --checksig qtox-${VERSION}-fc40.x86_64.rpm
+rpm --addsign qtox-${VERSION}-fc41.x86_64.rpm
+rpm --checksig qtox-${VERSION}-fc41.x86_64.rpm
+# Check the dependencies
+rpm -qp qtox-${VERSION}-fc41.x86_64.rpm --requires
 ```
