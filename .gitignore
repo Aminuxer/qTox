@@ -12,6 +12,8 @@ doc/html/*
 
 # Executables
 qtox
+qtox-*
+qtox.svgz
 *.exe
 build-*-Release
 build-*-Profile
@@ -55,3 +57,30 @@ target/
 
 # Tarballs
 *.tar.*
+
+# Auto generated tests
+**_autogen
+test_*
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+CPackConfig.cmake
+CPackSourceConfig.cmake
+CTestTestfile.cmake
+_CPack_Packages/
+audio/CMakeFiles/
+audio/cmake_install.cmake
+cmake/warnings/CMakeFiles/
+cmake/warnings/cmake_install.cmake
+cmake_install.cmake
+install_manifest.txt
+install_manifest_Runtime.txt
+install_manifest_Unspecified.txt
+translations/translations.qrc.in
+
+# Eclipse project files
+**.cproject
+**.project
+**.csettings
+**.settings

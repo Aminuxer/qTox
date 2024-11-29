@@ -112,7 +112,7 @@ void AboutForm::replaceVersions()
     qDebug() << "AboutForm not showing updates, qTox built without UPDATE_CHECK";
 #endif
 
-    QString commitLink = "https://github.com/qTox/qTox/commit/" + QString(GIT_VERSION);
+    QString commitLink = "https://github.com/nickolay168/qTox/commit/" + QString(GIT_VERSION);
     bodyUI->gitVersion->setText(
         tr("Commit hash: %1").arg(createLink(commitLink, QString(GIT_VERSION))));
 
@@ -157,7 +157,8 @@ void AboutForm::replaceVersions()
                                "Replaces `%2` in the `A list of all known…`"))));
 
     bodyUI->clickToReport->setText(
-        createLink("https://github.com/qTox/qTox/issues/new?body=" + QString::fromUtf8(QUrl(issueBody).toEncoded()),
+        createLink("https://github.com/qTox/qTox/issues/new?body="
+                       + QString::fromUtf8(QUrl(issueBody).toEncoded()),
                    QString("<b>%1</b>").arg(tr("Click here to report a bug."))));
 
 

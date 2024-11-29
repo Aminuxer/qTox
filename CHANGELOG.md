@@ -1,3 +1,16 @@
+<a name="v1.17.7"></a>
+## v1.17.7 (2024-11-28)
+
+
+#### Bug Fixes
+
+* Show light object to camera while speaking, the application will fail (Fixed in [toxcore](https://github.com/TokTok/c-toxcore/pull/2768) ETA in v. 0.2.20).
+* Fix the failure when logging is switched off and user tries to get detail for the friend. (Fixed)
+* SIGABRT during the attempt to delete a friend. (Fixed)
+* Setting NoSpam does not have an effect (Fixed)
+
+
+
 <a name="v1.17.6"></a>
 ## v1.17.6 (2022-03-06)
 
