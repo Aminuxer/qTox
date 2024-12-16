@@ -427,11 +427,6 @@ void ChatHistory::dispatchUnsentMessages(IMessageDispatcher& messageDispatcher)
 {
     auto unsentMessages = history->getUndeliveredMessagesForChat(chat.getPersistentId());
 
-    auto requiredExtensions = std::accumulate(
-        unsentMessages.begin(), unsentMessages.end(),
-        ExtensionSet(), [] (const ExtensionSet& a, const History::HistMessage& b) {
-            return a | b.extensionSet;
-        });
 
     for (auto& message : unsentMessages) {
         // We should only store messages as unsent, if this changes in the
@@ -446,12 +441,7 @@ void ChatHistory::dispatchUnsentMessages(IMessageDispatcher& messageDispatcher)
         // with the new timestamp. This is intentional as everywhere else we use
         // attempted send time (which is whenever the it was initially inserted
         // into history
-        auto dispatchId = requiredExtensions.none()
-            // We should only send a single message, but in the odd case where we end
-            // up having to split more than when we added the message to history we'll
-            // just associate the last dispatched id with the history message
-            ? messageDispatcher.sendMessage(isAction, messageContent).second
-            : messageDispatcher.sendExtendedMessage(messageContent, requiredExtensions).second;
+        auto dispatchId = messageDispatcher.sendMessage(isAction, messageContent).second;
 
         handleDispatchedMessage(dispatchId, message.id);
 

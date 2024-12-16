@@ -35,29 +35,24 @@ class FriendMessageDispatcher : public IMessageDispatcher
     Q_OBJECT
 public:
     FriendMessageDispatcher(Friend& f, MessageProcessor processor,
-                            ICoreFriendMessageSender& messageSender,
-                            ICoreExtPacketAllocator& coreExt);
+                            ICoreFriendMessageSender& messageSender);
 
     std::pair<DispatchedMessageId, DispatchedMessageId> sendMessage(bool isAction,
                                                                     const QString& content) override;
 
-    std::pair<DispatchedMessageId, DispatchedMessageId> sendExtendedMessage(const QString& content, ExtensionSet extensions) override;
     void onMessageReceived(bool isAction, const QString& content);
     void onReceiptReceived(ReceiptNum receipt);
-    void onExtMessageReceived(const QString& content);
-    void onExtReceiptReceived(uint64_t receiptId);
     void clearOutgoingMessages();
 private slots:
     void onFriendOnlineOfflineChanged(const ToxPk& friendPk, bool isOnline);
 
 private:
     void sendProcessedMessage(Message const& message, OfflineMsgEngine::CompletionFn onOfflineMsgComplete);
-    void sendExtendedProcessedMessage(Message const& message, OfflineMsgEngine::CompletionFn onOfflineMsgComplete);
     void sendCoreProcessedMessage(Message const& message, OfflineMsgEngine::CompletionFn onOfflineMsgComplete);
     OfflineMsgEngine::CompletionFn getCompletionFn(DispatchedMessageId messageId);
 
     Friend& f;
-    ICoreExtPacketAllocator& coreExtPacketAllocator;
+    //ICoreExtPacketAllocator& coreExtPacketAllocator;
     DispatchedMessageId nextMessageId = DispatchedMessageId(0);
 
     ICoreFriendMessageSender& messageSender;

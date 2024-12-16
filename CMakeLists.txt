@@ -219,8 +219,6 @@ set(${PROJECT_NAME}_SOURCES
   src/chatlog/textformatter.h
   src/core/coreav.cpp
   src/core/coreav.h
-  src/core/coreext.cpp
-  src/core/coreext.h
   src/core/core.cpp
   src/core/corefile.cpp
   src/core/corefile.h
@@ -391,8 +389,6 @@ set(${PROJECT_NAME}_SOURCES
   src/widget/contentlayout.h
   src/widget/emoticonswidget.cpp
   src/widget/emoticonswidget.h
-  src/widget/extensionstatus.cpp
-  src/widget/extensionstatus.h
   src/widget/flowlayout.cpp
   src/widget/flowlayout.h
   src/widget/imagepreviewwidget.h

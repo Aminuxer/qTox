@@ -41,7 +41,7 @@ GroupMessageDispatcher::sendMessage(bool isAction, QString const& content)
     const auto firstMessageId = nextMessageId;
     auto lastMessageId = firstMessageId;
 
-    for (auto const& message : processor.processOutgoingMessage(isAction, content, ExtensionSet())) {
+    for (auto const& message : processor.processOutgoingMessage(isAction, content)) {
         auto messageId = nextMessageId++;
         lastMessageId = messageId;
         if (group.getPeersCount() != 1) {
@@ -65,17 +65,17 @@ GroupMessageDispatcher::sendMessage(bool isAction, QString const& content)
     return std::make_pair(firstMessageId, lastMessageId);
 }
 
-std::pair<DispatchedMessageId, DispatchedMessageId>
-GroupMessageDispatcher::sendExtendedMessage(const QString& content, ExtensionSet extensions)
-{
-    std::ignore = extensions;
-    // Stub this api to immediately fail
-    auto messageId = nextMessageId++;
-    auto messages = processor.processOutgoingMessage(false, content, ExtensionSet());
-    emit messageSent(messageId, messages[0]);
-    emit messageBroken(messageId, BrokenMessageReason::unsupportedExtensions);
-    return {messageId, messageId};
-}
+//std::pair<DispatchedMessageId, DispatchedMessageId>
+//GroupMessageDispatcher::sendExtendedMessage(const QString& content, ExtensionSet extensions)
+//{
+//    std::ignore = extensions;
+//    // Stub this api to immediately fail
+//    auto messageId = nextMessageId++;
+//    auto messages = processor.processOutgoingMessage(false, content);
+//    emit messageSent(messageId, messages[0]);
+//    emit messageBroken(messageId, BrokenMessageReason::unsupportedExtensions);
+//    return {messageId, messageId};
+//}
 
 /**
  * @brief Processes and dispatches received message from toxcore

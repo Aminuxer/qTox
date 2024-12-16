@@ -21,6 +21,8 @@
 
 #include <bitset>
 
+//Note: This file is left here for backward compatibility with historic messages.
+
 // Do not use enum class because we use these as indexes frequently (see ExtensionSet)
 struct ExtensionType
 {

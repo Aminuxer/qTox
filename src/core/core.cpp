@@ -22,7 +22,6 @@
 #include "coreav.h"
 #include "corefile.h"
 
-#include "src/core/coreext.h"
 #include "src/core/dhtserver.h"
 #include "src/core/icoresettings.h"
 #include "src/core/toxlogger.h"
@@ -239,9 +238,6 @@ ToxCorePtr Core::makeToxCore(const QByteArray& savedata, const ICoreSettings& se
         return {};
     }
 
-    core->ext = CoreExt::makeCoreExt(core->tox.get());
-    connect(core.get(), &Core::friendStatusChanged, core->ext.get(), &CoreExt::onFriendStatusChanged);
-
     registerCallbacks(core->tox.get());
 
     // connect the thread with the Core
@@ -317,16 +313,6 @@ CompatibleRecursiveMutex &Core::getCoreLoopLock() const
     return coreLoopLock;
 }
 
-const CoreExt* Core::getExt() const
-{
-    return ext.get();
-}
-
-CoreExt* Core::getExt()
-{
-    return ext.get();
-}
-
 /**
  * @brief Processes toxcore events and ensure we stay connected, called by its own timer
  */
@@ -337,7 +323,6 @@ void Core::process()
     ASSERT_CORE_THREAD;
 
     tox_iterate(tox.get(), this);
-    ext->process();
 
 #ifdef DEBUG
     // we want to see the debug messages immediately
@@ -603,9 +588,13 @@ void Core::onGroupTitleChange(Tox* tox, uint32_t groupId, uint32_t peerId, const
 void Core::onLosslessPacket(Tox* tox, uint32_t friendId,
                             const uint8_t* data, size_t length, void* vCore)
 {
+	// We do not support LosLessPackages yet, the old support is removed due to security
+	    // issues in non supported code.
     std::ignore = tox;
-    Core* core = static_cast<Core*>(vCore);
-    core->ext->onLosslessPacket(friendId, data, length);
+    std::ignore = data;
+    std::ignore = length;
+    QString msg = "The friend has send you extended message, which is not supported yet. The support was removed due to security issues.";
+    emit static_cast<Core*>(vCore)->friendMessageReceived(friendId, msg, false);
 }
 
 void Core::onReadReceiptCallback(Tox* tox, uint32_t friendId, uint32_t receipt, void* core)

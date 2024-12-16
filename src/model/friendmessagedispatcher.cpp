@@ -21,11 +21,12 @@
 #include "src/persistence/settings.h"
 #include "src/model/status.h"
 
-FriendMessageDispatcher::FriendMessageDispatcher(Friend& f_, MessageProcessor processor_,
-                                                 ICoreFriendMessageSender& messageSender_,
-                                                 ICoreExtPacketAllocator& coreExtPacketAllocator_)
+FriendMessageDispatcher::FriendMessageDispatcher(
+		Friend& f_,
+		MessageProcessor processor_,
+        ICoreFriendMessageSender& messageSender_
+	)
     : f(f_)
-    , coreExtPacketAllocator(coreExtPacketAllocator_)
     , messageSender(messageSender_)
     , processor(std::move(processor_))
 {
@@ -40,7 +41,7 @@ FriendMessageDispatcher::sendMessage(bool isAction, const QString& content)
 {
     const auto firstId = nextMessageId;
     auto lastId = nextMessageId;
-    for (const auto& message : processor.processOutgoingMessage(isAction, content, f.getSupportedExtensions())) {
+    for (const auto& message : processor.processOutgoingMessage(isAction, content)) {
         auto messageId = nextMessageId++;
         lastId = messageId;
 
@@ -55,23 +56,24 @@ FriendMessageDispatcher::sendMessage(bool isAction, const QString& content)
 /**
  * @see IMessageDispatcher::sendExtendedMessage
  */
-std::pair<DispatchedMessageId, DispatchedMessageId>
-FriendMessageDispatcher::sendExtendedMessage(const QString& content, ExtensionSet extensions)
-{
-    const auto firstId = nextMessageId;
-    auto lastId = nextMessageId;
-
-    for (const auto& message : processor.processOutgoingMessage(false, content, extensions)) {
-        auto messageId = nextMessageId++;
-        lastId = messageId;
-
-        auto onOfflineMsgComplete = getCompletionFn(messageId);
-        sendProcessedMessage(message, onOfflineMsgComplete);
-
-        emit messageSent(messageId, message);
-    }
-    return std::make_pair(firstId, lastId);
-}
+// Extended messages are disabled due to secutrity issues in unsupported code
+//std::pair<DispatchedMessageId, DispatchedMessageId>
+//FriendMessageDispatcher::sendExtendedMessage(const QString& content, ExtensionSet extensions)
+//{
+//    const auto firstId = nextMessageId;
+//    auto lastId = nextMessageId;
+//
+//    for (const auto& message : processor.processOutgoingMessage(false, content, extensions)) {
+//        auto messageId = nextMessageId++;
+//        lastId = messageId;
+//
+//        auto onOfflineMsgComplete = getCompletionFn(messageId);
+//        sendProcessedMessage(message, onOfflineMsgComplete);
+//
+//        emit messageSent(messageId, message);
+//    }
+//    return std::make_pair(firstId, lastId);
+//}
 
 /**
  * @brief Handles received message from toxcore
@@ -92,16 +94,18 @@ void FriendMessageDispatcher::onReceiptReceived(ReceiptNum receipt)
     offlineMsgEngine.onReceiptReceived(receipt);
 }
 
-void FriendMessageDispatcher::onExtMessageReceived(const QString& content)
-{
-    auto message = processor.processIncomingExtMessage(content);
-    emit messageReceived(f.getPublicKey(), message);
-}
+// Extended messages are disabled due to secutrity issues in unsupported code
+//void FriendMessageDispatcher::onExtMessageReceived(const QString& content)
+//{
+//    auto message = processor.processIncomingExtMessage(content);
+//    emit messageReceived(f.getPublicKey(), message);
+//}
 
-void FriendMessageDispatcher::onExtReceiptReceived(uint64_t receiptId)
-{
-    offlineMsgEngine.onExtendedReceiptReceived(ExtendedReceiptNum(receiptId));
-}
+// Extended messages are disabled due to secutrity issues in unsupported code
+//void FriendMessageDispatcher::onExtReceiptReceived(uint64_t receiptId)
+//{
+//    offlineMsgEngine.onExtendedReceiptReceived(ExtendedReceiptNum(receiptId));
+//}
 
 /**
  * @brief Handles status change for friend
@@ -135,40 +139,42 @@ void FriendMessageDispatcher::sendProcessedMessage(Message const& message, Offli
     }
 
     if (message.extensionSet[ExtensionType::messages] && !message.isAction) {
-        sendExtendedProcessedMessage(message, onOfflineMsgComplete);
+        //sendExtendedProcessedMessage(message, onOfflineMsgComplete);
+
     } else {
         sendCoreProcessedMessage(message, onOfflineMsgComplete);
     }
 }
 
 
-
-void FriendMessageDispatcher::sendExtendedProcessedMessage(Message const& message, OfflineMsgEngine::CompletionFn onOfflineMsgComplete)
-{
-    assert(!message.isAction); // Actions not supported with extensions
-
-    if ((f.getSupportedExtensions() & message.extensionSet) != message.extensionSet) {
-        onOfflineMsgComplete(false);
-        return;
-    }
-
-    auto receipt = ExtendedReceiptNum();
-
-    const auto friendId = f.getId();
-    auto packet = coreExtPacketAllocator.getPacket(friendId);
-
-    if (message.extensionSet[ExtensionType::messages]) {
-        receipt.get() = packet->addExtendedMessage(message.content);
-    }
-
-    const auto messageSent = packet->send();
-
-    if (messageSent) {
-        offlineMsgEngine.addSentExtendedMessage(receipt, message, onOfflineMsgComplete);
-    } else {
-        offlineMsgEngine.addUnsentMessage(message, onOfflineMsgComplete);
-    }
-}
+// Extended messages are disabled due to secutrity issues in unsupported code
+//void FriendMessageDispatcher::sendExtendedProcessedMessage(Message const& message, OfflineMsgEngine::CompletionFn onOfflineMsgComplete)
+//{
+//    assert(!message.isAction); // Actions not supported with extensions
+//
+//    if ((f.getSupportedExtensions() & message.extensionSet) != message.extensionSet) {
+//        onOfflineMsgComplete(false);
+//        return;
+//    }
+//
+//    auto receipt = ExtendedReceiptNum();
+//
+//    const auto friendId = f.getId();
+//    //Note coreExtPacketAllocator(coreExtPacketAllocator_) is CoreExt [Removed from current version]
+//    auto packet = coreExtPacketAllocator.getPacket(friendId);
+//
+//    if (message.extensionSet[ExtensionType::messages]) {
+//        receipt.get() = packet->addExtendedMessage(message.content);
+//    }
+//
+//    const auto messageSent = packet->send();
+//
+//    if (messageSent) {
+//        offlineMsgEngine.addSentExtendedMessage(receipt, message, onOfflineMsgComplete);
+//    } else {
+//        offlineMsgEngine.addUnsentMessage(message, onOfflineMsgComplete);
+//    }
+//}
 
 void FriendMessageDispatcher::sendCoreProcessedMessage(Message const& message, OfflineMsgEngine::CompletionFn onOfflineMsgComplete)
 {

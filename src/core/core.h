@@ -45,7 +45,6 @@
 
 class CoreAV;
 class CoreFile;
-class CoreExt;
 class IAudioControl;
 class ICoreSettings;
 class GroupInvite;
@@ -82,8 +81,6 @@ public:
     Tox* getTox() const;
     CompatibleRecursiveMutex& getCoreLoopLock() const;
 
-    const CoreExt* getExt() const;
-    CoreExt* getExt();
     ~Core();
 
     static const QString TOX_EXT;
@@ -265,7 +262,6 @@ private:
 
     std::unique_ptr<CoreFile> file;
     CoreAV* av = nullptr;
-    std::unique_ptr<CoreExt> ext;
     QTimer* toxTimer = nullptr;
     // recursive, since we might call our own functions
     mutable CompatibleRecursiveMutex coreLoopLock;
