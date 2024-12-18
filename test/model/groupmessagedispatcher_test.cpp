@@ -156,7 +156,7 @@ void TestGroupMessageDispatcher::init()
             *friendList));
     messageSender = std::unique_ptr<MockGroupMessageSender>(new MockGroupMessageSender());
     sharedProcessorParams =
-        std::unique_ptr<MessageProcessor::SharedParams>(new MessageProcessor::SharedParams(tox_max_message_length(), 10 * 1024 * 1024));
+        std::unique_ptr<MessageProcessor::SharedParams>(new MessageProcessor::SharedParams(tox_max_message_length()));
     messageProcessor = std::unique_ptr<MessageProcessor>(new MessageProcessor(*sharedProcessorParams));
     groupMessageDispatcher = std::unique_ptr<GroupMessageDispatcher>(
         new GroupMessageDispatcher(*g, *messageProcessor, *coreIdHandler, *messageSender,

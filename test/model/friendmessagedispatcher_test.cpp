@@ -28,56 +28,6 @@
 #include <set>
 #include <deque>
 
-namespace {
-constexpr uint64_t testMaxExtendedMessageSize = 10 * 1024 * 1024;
-}
-
-class MockCoreExtPacket : public ICoreExtPacket
-{
-public:
-
-    MockCoreExtPacket(uint64_t& numSentMessages_, uint64_t& currentReceiptId_)
-        : numSentMessages(numSentMessages_)
-        , currentReceiptId(currentReceiptId_)
-    {}
-
-    uint64_t addExtendedMessage(QString message_) override;
-
-    bool send() override;
-
-    uint64_t& numSentMessages;
-    uint64_t& currentReceiptId;
-    QDateTime senderTimestamp;
-    QString message;
-};
-
-uint64_t MockCoreExtPacket::addExtendedMessage(QString message_)
-{
-    message = message_;
-    return currentReceiptId++;
-}
-
-bool MockCoreExtPacket::send()
-{
-    numSentMessages++;
-    return true;
-}
-
-class MockCoreExtPacketAllocator : public ICoreExtPacketAllocator
-{
-public:
-    std::unique_ptr<ICoreExtPacket> getPacket(uint32_t friendId) override;
-
-    uint64_t numSentMessages;
-    uint64_t currentReceiptId;
-};
-
-std::unique_ptr<ICoreExtPacket> MockCoreExtPacketAllocator::getPacket(uint32_t friendId)
-{
-    std::ignore = friendId;
-    return std::unique_ptr<MockCoreExtPacket>(new MockCoreExtPacket(numSentMessages, currentReceiptId));
-}
-
 class MockFriendMessageSender : public ICoreFriendMessageSender
 {
 public:
@@ -130,9 +80,6 @@ private slots:
     void testFailedMessage();
     void testNegotiationFailure();
     void testNegotiationSuccess();
-    void testOfflineExtensionMessages();
-    void testSentMessageExtensionSetReduced();
-    void testActionMessagesSplitWithExtensions();
 
     void onMessageSent(DispatchedMessageId id, Message message)
     {
@@ -164,7 +111,6 @@ private:
     // All unique_ptrs to make construction/init() easier to manage
     std::unique_ptr<Friend> f;
     std::unique_ptr<MockFriendMessageSender> messageSender;
-    std::unique_ptr<MockCoreExtPacketAllocator> coreExtPacketAllocator;
     std::unique_ptr<MessageProcessor::SharedParams> sharedProcessorParams;
     std::unique_ptr<MessageProcessor> messageProcessor;
     std::unique_ptr<FriendMessageDispatcher> friendMessageDispatcher;
@@ -184,13 +130,12 @@ void TestFriendMessageDispatcher::init()
     f->setStatus(Status::Status::Online);
     f->onNegotiationComplete();
     messageSender = std::unique_ptr<MockFriendMessageSender>(new MockFriendMessageSender());
-    coreExtPacketAllocator = std::unique_ptr<MockCoreExtPacketAllocator>(new MockCoreExtPacketAllocator());
     sharedProcessorParams =
-        std::unique_ptr<MessageProcessor::SharedParams>(new MessageProcessor::SharedParams(tox_max_message_length(), testMaxExtendedMessageSize));
+        std::unique_ptr<MessageProcessor::SharedParams>(new MessageProcessor::SharedParams(tox_max_message_length()));
 
     messageProcessor = std::unique_ptr<MessageProcessor>(new MessageProcessor(*sharedProcessorParams));
     friendMessageDispatcher = std::unique_ptr<FriendMessageDispatcher>(
-        new FriendMessageDispatcher(*f, *messageProcessor, *messageSender, *coreExtPacketAllocator));
+        new FriendMessageDispatcher(*f, *messageProcessor, *messageSender));
 
     connect(friendMessageDispatcher.get(), &FriendMessageDispatcher::messageSent, this,
             &TestFriendMessageDispatcher::onMessageSent);
@@ -329,85 +274,12 @@ void TestFriendMessageDispatcher::testNegotiationSuccess()
     f->setStatus(Status::Status::Offline);
     f->setStatus(Status::Status::Online);
 
-    f->setExtendedMessageSupport(true);
     f->onNegotiationComplete();
 
     friendMessageDispatcher->sendMessage(false, "test");
 
-    QVERIFY(coreExtPacketAllocator->numSentMessages == 1);
-
     friendMessageDispatcher->sendMessage(false, "test");
-    QVERIFY(coreExtPacketAllocator->numSentMessages == 2);
     QVERIFY(messageSender->numSentMessages == 0);
-}
-
-void TestFriendMessageDispatcher::testOfflineExtensionMessages()
-{
-    f->setStatus(Status::Status::Offline);
-
-    auto requiredExtensions = ExtensionSet();
-    requiredExtensions[ExtensionType::messages] = true;
-
-    friendMessageDispatcher->sendExtendedMessage("Test", requiredExtensions);
-
-    f->setStatus(Status::Status::Online);
-    f->setExtendedMessageSupport(true);
-    f->onNegotiationComplete();
-
-    // Ensure that when our friend came online with the desired extensions we
-    // were able to send them our message over the extended message path
-    QVERIFY(coreExtPacketAllocator->numSentMessages == 1);
-
-    f->setStatus(Status::Status::Offline);
-
-    friendMessageDispatcher->sendExtendedMessage("Test", requiredExtensions);
-
-    f->setStatus(Status::Status::Online);
-    f->setExtendedMessageSupport(false);
-    f->onNegotiationComplete();
-
-    // Here we want to make sure that when they do _not_ support extensions
-    // we discard the message instead of attempting to send it over either
-    // channel
-    QVERIFY(coreExtPacketAllocator->numSentMessages == 1);
-    QVERIFY(messageSender->numSentMessages == 0);
-}
-
-void TestFriendMessageDispatcher::testSentMessageExtensionSetReduced()
-{
-    f->setStatus(Status::Status::Online);
-    f->setExtendedMessageSupport(true);
-    f->onNegotiationComplete();
-
-    friendMessageDispatcher->sendMessage(false, "Test");
-
-    f->setStatus(Status::Status::Offline);
-    f->setStatus(Status::Status::Online);
-    f->setExtendedMessageSupport(false);
-    f->onNegotiationComplete();
-
-    // Ensure that when we reduce our extension set we correctly emit the
-    // "messageBroken" signal
-    QVERIFY(brokenMessages.size() == 1);
-}
-
-void TestFriendMessageDispatcher::testActionMessagesSplitWithExtensions()
-{
-    f->setStatus(Status::Status::Online);
-    f->setExtendedMessageSupport(true);
-    f->onNegotiationComplete();
-
-    auto reallyLongMessage = QString("a");
-
-    for (uint64_t i = 0; i < testMaxExtendedMessageSize + 50; ++i) {
-        reallyLongMessage += QString().number(i);
-    }
-
-    friendMessageDispatcher->sendMessage(true, reallyLongMessage);
-
-    QVERIFY(coreExtPacketAllocator->numSentMessages == 0);
-    QVERIFY(messageSender->numSentMessages == 0);
-    QVERIFY(messageSender->numSentActions > 1);
 }
 
 QTEST_GUILESS_MAIN(TestFriendMessageDispatcher)

@@ -33,7 +33,6 @@ class QPushButton;
 class QToolButton;
 class CallConfirmWidget;
 class QLabel;
-class ExtensionStatus;
 class Settings;
 class Style;
 
@@ -71,7 +70,6 @@ public:
     void showCallConfirm();
     void removeCallConfirm();
 
-    void updateExtensionSupport(ExtensionSet extensions);
     void updateCallButtons(bool online, bool audio, bool video = false);
     void updateMuteMicButton(bool active, bool inputMuted);
     void updateMuteVolButton(bool active, bool outputMuted);
@@ -107,7 +105,6 @@ private:
     MaskablePixmapWidget* avatar;
     QVBoxLayout* headTextLayout;
     QHBoxLayout* nameLine;
-    ExtensionStatus* extensionStatus;
     CroppingLabel* nameLabel;
 
     QPushButton* callButton;

@@ -18,7 +18,6 @@
 */
 
 #include "chatformheader.h"
-#include "extensionstatus.h"
 
 #include "src/model/status.h"
 
@@ -125,8 +124,6 @@ ChatFormHeader::ChatFormHeader(Settings& settings_, Style& style_, QWidget* pare
     nameLine = new QHBoxLayout();
     nameLine->setSpacing(3);
 
-    extensionStatus = new ExtensionStatus();
-
     nameLabel = new CroppingLabel();
     nameLabel->setObjectName("nameLabel");
     nameLabel->setMinimumHeight(Style::getFont(Style::Font::Medium).pixelSize());
@@ -134,7 +131,6 @@ ChatFormHeader::ChatFormHeader(Settings& settings_, Style& style_, QWidget* pare
     nameLabel->setTextFormat(Qt::PlainText);
     connect(nameLabel, &CroppingLabel::editFinished, this, &ChatFormHeader::nameChanged);
 
-    nameLine->addWidget(extensionStatus);
     nameLine->addWidget(nameLabel);
 
     headTextLayout = new QVBoxLayout();
@@ -234,11 +230,6 @@ void ChatFormHeader::showCallConfirm()
 void ChatFormHeader::removeCallConfirm()
 {
     callConfirm.reset(nullptr);
-}
-
-void ChatFormHeader::updateExtensionSupport(ExtensionSet extensions)
-{
-    extensionStatus->onExtensionSetUpdate(extensions);
 }
 
 void ChatFormHeader::updateCallButtons(bool online, bool audio, bool video)

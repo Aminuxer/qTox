@@ -83,13 +83,11 @@ MessageProcessor::MessageProcessor(const MessageProcessor::SharedParams& sharedP
 /**
  * @brief Converts an outgoing message into one (or many) sanitized Message(s)
  */
-std::vector<Message> MessageProcessor::processOutgoingMessage(bool isAction, QString const& content, ExtensionSet extensions)
+std::vector<Message> MessageProcessor::processOutgoingMessage(bool isAction, QString const& content)
 {
     std::vector<Message> ret;
 
-    const auto maxSendingSize = extensions[ExtensionType::messages]
-        ? sharedParams.getMaxExtendedMessageSize()
-        : sharedParams.getMaxCoreMessageSize();
+    const auto maxSendingSize = sharedParams.getMaxCoreMessageSize();
 
     const auto splitMsgs = splitMessage(content, maxSendingSize);
 
@@ -102,10 +100,8 @@ std::vector<Message> MessageProcessor::processOutgoingMessage(bool isAction, QSt
                        message.isAction = isAction;
                        message.content = part;
                        message.timestamp = timestamp;
-                       // In theory we could limit this only to the extensions
-                       // required but since Core owns the splitting logic it
-                       // isn't trivial to do that now
-                       message.extensionSet = extensions;
+                       // We do not support the extensions anymore.
+                       message.extensionSet = ExtensionSet();
                        return message;
                    });
 
@@ -152,17 +148,18 @@ Message MessageProcessor::processIncomingCoreMessage(bool isAction, QString cons
     return ret;
 }
 
-Message MessageProcessor::processIncomingExtMessage(const QString& content)
-{
-    // Note: detectingMentions not implemented here since mentions are only
-    // currently useful in group messages which do not support extensions. If we
-    // were to support mentions we would probably want to do something more
-    // intelligent anyways
-    assert(detectingMentions == false);
-    auto message = Message();
-    message.timestamp = QDateTime::currentDateTime();
-    message.content = content;
-    message.extensionSet |= ExtensionType::messages;
-
-    return message;
-}
+// Extended messages were disabled because of vulnerability in non supported code.
+//Message MessageProcessor::processIncomingExtMessage(const QString& content)
+//{
+//    // Note: detectingMentions not implemented here since mentions are only
+//    // currently useful in group messages which do not support extensions. If we
+//    // were to support mentions we would probably want to do something more
+//    // intelligent anyways
+//    assert(detectingMentions == false);
+//    auto message = Message();
+//    message.timestamp = QDateTime::currentDateTime();
+//    message.content = content;
+//    message.extensionSet |= ExtensionType::messages;
+//
+//    return message;
+//}

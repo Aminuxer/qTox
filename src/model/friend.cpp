@@ -201,17 +201,6 @@ Status::Status Friend::getStatus() const
     return isNegotiating ? Status::Status::Negotiating : friendStatus;
 }
 
-void Friend::setExtendedMessageSupport(bool supported)
-{
-    supportedExtensions[ExtensionType::messages] = supported;
-    emit extensionSupportChanged(supportedExtensions);
-
-    // If all extensions are supported we can exit early
-    if (supportedExtensions.all()) {
-        onNegotiationComplete();
-    }
-}
-
 ExtensionSet Friend::getSupportedExtensions() const
 {
     return supportedExtensions;

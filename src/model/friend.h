@@ -65,7 +65,6 @@ signals:
     void statusChanged(const ToxPk& friendId, Status::Status status);
     void onlineOfflineChanged(const ToxPk& friendId, bool isOnline);
     void statusMessageChanged(const ToxPk& friendId, const QString& message);
-    void extensionSupportChanged(ExtensionSet extensions);
     void loadChatHistory();
 
 public slots:

@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include "src/core/coreext.h"
 #include "src/core/extension.h"
 
 #include <QDateTime>
@@ -71,9 +70,8 @@ public:
     {
 
     public:
-        SharedParams(uint64_t maxCoreMessageSize_, uint64_t maxExtendedMessageSize_)
+        SharedParams(uint64_t maxCoreMessageSize_)
             : maxCoreMessageSize(maxCoreMessageSize_)
-            , maxExtendedMessageSize(maxExtendedMessageSize_)
         {}
 
         QRegularExpression getNameMention() const
@@ -96,14 +94,8 @@ public:
             return maxCoreMessageSize;
         }
 
-        uint64_t getMaxExtendedMessageSize() const
-        {
-            return maxExtendedMessageSize;
-        }
-
     private:
         uint64_t maxCoreMessageSize;
-        uint64_t maxExtendedMessageSize;
         QRegularExpression nameMention;
         QRegularExpression sanitizedNameMention;
         QRegularExpression pubKeyMention;
@@ -111,9 +103,8 @@ public:
 
     MessageProcessor(const SharedParams& sharedParams_);
 
-    std::vector<Message> processOutgoingMessage(bool isAction, const QString& content, ExtensionSet extensions);
+    std::vector<Message> processOutgoingMessage(bool isAction, const QString& content);
     Message processIncomingCoreMessage(bool isAction, const QString& message);
-    Message processIncomingExtMessage(const QString& content);
 
     /**
      * @brief Enables mention detection in the processor
