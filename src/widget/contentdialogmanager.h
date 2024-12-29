@@ -60,10 +60,10 @@ private slots:
 
 private:
     ContentDialog* focusDialog(const ChatId& id,
-                               const QHash<const ChatId&, ContentDialog*>& list);
+                               const QHash<const QByteArray, ContentDialog*>& list);
 
     ContentDialog* currentDialog = nullptr;
 
-    QHash<const ChatId&, ContentDialog*> chatDialogs;
+    QHash<const QByteArray, ContentDialog*> chatDialogs;
     FriendList& friendList;
 };

@@ -21,7 +21,6 @@
 
 #include <QApplication>
 #include <QThread>
-#include <QMessageBox>
 #include <QPushButton>
 #include <QFileInfo>
 #include <QDesktopServices>
@@ -162,21 +161,21 @@ void MessageBoxManager::confirmExecutableOpen(const QFileInfo& file)
 void MessageBoxManager::_showInfo(const QString& title, const QString& msg)
 {
     QMessageBox messageBox(QMessageBox::Information, title, msg, QMessageBox::Ok, this);
-    messageBox.setButtonText(QMessageBox::Ok, QApplication::tr("Ok"));
+    setButtonText(messageBox, QMessageBox::Ok, QApplication::tr("Ok"));
     messageBox.exec();
 }
 
 void MessageBoxManager::_showWarning(const QString& title, const QString& msg)
 {
     QMessageBox messageBox(QMessageBox::Warning, title, msg, QMessageBox::Ok, this);
-    messageBox.setButtonText(QMessageBox::Ok, QApplication::tr("Ok"));
+    setButtonText(messageBox, QMessageBox::Ok, QApplication::tr("Ok"));
     messageBox.exec();
 }
 
 void MessageBoxManager::_showError(const QString& title, const QString& msg)
 {
     QMessageBox messageBox(QMessageBox::Critical, title, msg, QMessageBox::Ok, this);
-    messageBox.setButtonText(QMessageBox::Ok, QApplication::tr("Ok"));
+    setButtonText(messageBox, QMessageBox::Ok, QApplication::tr("Ok"));
     messageBox.exec();
 }
 
@@ -202,4 +201,12 @@ bool MessageBoxManager::_askQuestion(const QString& title, const QString& msg, c
 
     box.exec();
     return box.clickedButton() == pushButton1;
+}
+
+void MessageBoxManager::setButtonText(QMessageBox& msgBox, QMessageBox::StandardButton buttons, const QString& text)
+{
+	auto btn = msgBox.button(buttons);
+	if (btn != nullptr){
+		btn->setText(text);
+	}
 }

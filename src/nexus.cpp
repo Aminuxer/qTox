@@ -33,10 +33,8 @@
 #include "audio/audio.h"
 #include "src/ipc.h"
 
-#include <QApplication>
 #include <QCommandLineParser>
 #include <QDebug>
-#include <QDesktopWidget>
 #include <QThread>
 
 #include <vpx/vpx_image.h>
@@ -377,7 +375,7 @@ void Nexus::updateWindowsArg(QWindow* closedWindow)
         QAction* action = windowActions->addAction(windowList[i]->title());
         action->setCheckable(true);
         action->setChecked(windowList[i] == activeWindow);
-        connect(action, &QAction::triggered, [=] { onOpenWindow(windowList[i]); });
+        connect(action, &QAction::triggered, [=, this] { onOpenWindow(windowList[i]); });
         windowMenu->addAction(action);
         dockMenu->insertAction(dockLast, action);
     }

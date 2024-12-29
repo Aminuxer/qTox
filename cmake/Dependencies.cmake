@@ -22,16 +22,21 @@
 
 # This should go into subdirectories later.
 find_package(PkgConfig        REQUIRED)
-find_package(Qt5Concurrent    REQUIRED)
-find_package(Qt5Core          REQUIRED)
-find_package(Qt5Gui           REQUIRED)
-find_package(Qt5LinguistTools REQUIRED)
-find_package(Qt5Network       REQUIRED)
-find_package(Qt5OpenGL        REQUIRED)
-find_package(Qt5Svg           REQUIRED)
-find_package(Qt5Test          REQUIRED)
-find_package(Qt5Widgets       REQUIRED)
-find_package(Qt5Xml           REQUIRED)
+# qt6-qtbase-devel
+find_package(Qt6Concurrent    REQUIRED)
+find_package(Qt6Core          REQUIRED)
+find_package(Qt6Gui           REQUIRED)
+find_package(Qt6Test          REQUIRED)
+find_package(Qt6Widgets       REQUIRED)
+find_package(Qt6Xml           REQUIRED)
+find_package(Qt6Network       REQUIRED)
+find_package(Qt6OpenGL        REQUIRED)
+# qt6-qttools-devel
+find_package(Qt6LinguistTools REQUIRED)
+# qt6-qtsvg-devel
+find_package(Qt6Svg           REQUIRED)
+
+
 
 function(add_dependency)
   set(ALL_LIBRARIES ${ALL_LIBRARIES} ${ARGN} PARENT_SCOPE)
@@ -39,13 +44,16 @@ endfunction()
 
 # Everything links to these Qt libraries.
 add_dependency(
-  Qt5::Core
-  Qt5::Gui
-  Qt5::Network
-  Qt5::OpenGL
-  Qt5::Svg
-  Qt5::Widgets
-  Qt5::Xml)
+  # qt6-qtbase-devel
+  Qt6::Core
+  Qt6::Gui
+  Qt6::Network
+  Qt6::OpenGL
+  Qt6::Widgets
+  Qt6::Xml
+  # qt6-qtsvg-devel
+  Qt6::Svg
+  )
 
 include(CMakeParseArguments)
 
@@ -128,10 +136,10 @@ search_dependency(SQLCIPHER           PACKAGE sqlcipher)
 search_dependency(VPX                 PACKAGE vpx)
 
 if(${SPELL_CHECK})
-    find_package(KF5Sonnet)
-    if(KF5Sonnet_FOUND)
+    find_package(KF6Sonnet)
+    if(KF6Sonnet_FOUND)
       add_definitions(-DSPELL_CHECKING)
-      add_dependency(KF5::SonnetUi)
+      add_dependency(KF6::SonnetUi)
     else()
       message(WARNING "Sonnet not found. Spell checking will be disabled.")
     endif()
@@ -252,7 +260,8 @@ endif()
 
 if (${DESKTOP_NOTIFICATIONS})
     # snorenotify does only provide a cmake find module
-    find_package(LibsnoreQt5 0.7.0 REQUIRED)
+    # This library is not supported anymore 2024-12-22
+    find_package(LibsnoreQt6 0.7.0 REQUIRED)
     set(ALL_LIBRARIES ${ALL_LIBRARIES} Snore::Libsnore)
 endif()
 

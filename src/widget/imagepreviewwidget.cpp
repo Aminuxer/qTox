@@ -23,9 +23,9 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QString>
-#include <QApplication>
-#include <QDesktopWidget>
+#include <QScreen>
 #include <QBuffer>
+#include <QApplication>
 
 namespace
 {
@@ -80,7 +80,7 @@ QString getToolTipDisplayingImage(const QPixmap& image)
 {
     // Show mouseover preview, but make sure it's not larger than 50% of the screen
     // width/height
-    const QRect desktopSize = QApplication::desktop()->geometry();
+    const QRect desktopSize = QApplication::primaryScreen()->geometry();
     const int maxPreviewWidth{desktopSize.width() / 2};
     const int maxPreviewHeight{desktopSize.height() / 2};
     const QPixmap previewImage = [&image, maxPreviewWidth, maxPreviewHeight]() {

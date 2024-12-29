@@ -37,7 +37,7 @@ LoginScreen::LoginScreen(Settings& settings_, Style& style,
     const QString& initialProfileName, QWidget* parent)
     : QDialog(parent)
     , ui(new Ui::LoginScreen)
-    , quitShortcut{QKeySequence(Qt::CTRL + Qt::Key_Q), this}
+    , quitShortcut{QKeySequence(Qt::CTRL | Qt::Key_Q), this}
     , settings{settings_}
 {
     ui->setupUi(this);
@@ -59,7 +59,7 @@ LoginScreen::LoginScreen(Settings& settings_, Style& style,
     connect(ui->loginPassword, &QLineEdit::returnPressed, this, &LoginScreen::onLogin);
     connect(ui->newPass, &QLineEdit::textChanged, this, &LoginScreen::onPasswordEdited);
     connect(ui->newPassConfirm, &QLineEdit::textChanged, this, &LoginScreen::onPasswordEdited);
-    connect(ui->autoLoginCB, &QCheckBox::stateChanged, this, &LoginScreen::onAutoLoginCheckboxChanged);
+    connect(ui->autoLoginCB, &QCheckBox::checkStateChanged, this, &LoginScreen::onAutoLoginCheckboxChanged);
     connect(ui->importButton, &QPushButton::clicked, this, &LoginScreen::onImportProfile);
 
     reset(initialProfileName);

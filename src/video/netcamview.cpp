@@ -36,7 +36,6 @@
 #include <QLabel>
 #include <QCloseEvent>
 #include <QPushButton>
-#include <QDesktopWidget>
 
 namespace
 {
@@ -130,7 +129,7 @@ NetCamView::NetCamView(ToxPk friendPk_, CameraSource& cameraSource_,
 
     QHBoxLayout* frameLayout = new QHBoxLayout(selfFrame);
     frameLayout->addWidget(selfVideoSurface);
-    frameLayout->setMargin(0);
+    frameLayout->setContentsMargins(0, 0, 0, 0);
 
     updateRatio();
     connections +=

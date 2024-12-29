@@ -21,12 +21,12 @@
 #include "ui_userinterfacesettings.h"
 
 #include <QDebug>
-#include <QDesktopWidget>
 #include <QFileDialog>
 #include <QFont>
 #include <QMessageBox>
 #include <QRegularExpressionValidator>
 #include <QStyleFactory>
+#include <QScreen>
 #include <QTime>
 #include <QVector>
 
@@ -179,14 +179,11 @@ UserInterfaceForm::~UserInterfaceForm()
     delete bodyUI;
 }
 
-void UserInterfaceForm::on_styleBrowser_currentIndexChanged(QString textStyle)
+void UserInterfaceForm::on_styleBrowser_currentTextChanged(QString textStyle)
 {
-    if (bodyUI->styleBrowser->currentIndex() == 0)
-        settings.setStyle("None");
-    else
-        settings.setStyle(textStyle);
-
-    setStyle(QStyleFactory::create(textStyle));
+    settings.setStyle(textStyle);
+    auto newStyle = QStyleFactory::create(textStyle);
+    setStyle(newStyle);
     parent->setBodyHeadStyle(textStyle);
 }
 
@@ -262,10 +259,10 @@ void UserInterfaceForm::reloadSmileys()
     }
 
     // set maximum size of emoji
-    QDesktopWidget desktop;
+    auto geometry = QApplication::primaryScreen()->geometry();
     // 8 is the count of row and column in emoji's in widget
     const int sideSize = 8;
-    int maxSide = qMin(desktop.geometry().height() / sideSize, desktop.geometry().width() / sideSize);
+    int maxSide = qMin(geometry.height() / sideSize, geometry.width() / sideSize);
     QSize maxSize(maxSide, maxSide);
 
     QSize actualSize = emoticonsIcons.first()->actualSize(maxSize);

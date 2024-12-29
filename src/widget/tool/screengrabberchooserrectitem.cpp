@@ -24,12 +24,6 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 
-enum
-{
-    HandleSize = 10,
-    MinRectSize = 2,
-};
-
 ScreenGrabberChooserRectItem::ScreenGrabberChooserRectItem(QGraphicsScene* scene)
 {
     scene->addItem(this);
@@ -64,8 +58,8 @@ ScreenGrabberChooserRectItem::~ScreenGrabberChooserRectItem()
 
 QRectF ScreenGrabberChooserRectItem::boundingRect() const
 {
-    return QRectF(-HandleSize - 1, -HandleSize - 1, rectWidth + HandleSize + 1,
-                  rectHeight + HandleSize + 1);
+    return QRectF(-HANDLE_SIZE - 1, -HANDLE_SIZE - 1, rectWidth + HANDLE_SIZE + 1,
+                  rectHeight + HANDLE_SIZE + 1);
 }
 
 void ScreenGrabberChooserRectItem::beginResize(QPointF mousePos)
@@ -154,7 +148,7 @@ void ScreenGrabberChooserRectItem::mouseRelease(QGraphicsSceneMouseEvent* event)
         setCursor(QCursor(Qt::OpenHandCursor));
 
         QPointF delta = (event->scenePos() - startPos);
-        if (qAbs(delta.x()) < MinRectSize || qAbs(delta.y()) < MinRectSize) {
+        if (qAbs(delta.x()) < MIN_RECT_SIZE || qAbs(delta.y()) < MIN_RECT_SIZE) {
             rectWidth = rectHeight = 0;
             mainRect->setRect(QRect());
         } else {
@@ -261,19 +255,19 @@ QPoint ScreenGrabberChooserRectItem::getHandleMultiplier(QGraphicsItem* handle)
 
 void ScreenGrabberChooserRectItem::updateHandlePositions()
 {
-    topLeft->setPos(-HandleSize, -HandleSize);
-    topCenter->setPos((rectWidth - HandleSize) / 2, -HandleSize);
-    topRight->setPos(rectWidth, -HandleSize);
-    rightCenter->setPos(rectWidth, (rectHeight - HandleSize) / 2);
+    topLeft->setPos(-HANDLE_SIZE, -HANDLE_SIZE);
+    topCenter->setPos((rectWidth - HANDLE_SIZE) / 2, -HANDLE_SIZE);
+    topRight->setPos(rectWidth, -HANDLE_SIZE);
+    rightCenter->setPos(rectWidth, (rectHeight - HANDLE_SIZE) / 2);
     bottomRight->setPos(rectWidth, rectHeight);
-    bottomCenter->setPos((rectWidth - HandleSize) / 2, rectHeight);
-    bottomLeft->setPos(-HandleSize, rectHeight);
-    leftCenter->setPos(-HandleSize, (rectHeight - HandleSize) / 2);
+    bottomCenter->setPos((rectWidth - HANDLE_SIZE) / 2, rectHeight);
+    bottomLeft->setPos(-HANDLE_SIZE, rectHeight);
+    leftCenter->setPos(-HANDLE_SIZE, (rectHeight - HANDLE_SIZE) / 2);
 }
 
 QGraphicsRectItem* ScreenGrabberChooserRectItem::createHandleItem(QGraphicsScene* scene)
 {
-    QGraphicsRectItem* handle = new QGraphicsRectItem(0, 0, HandleSize, HandleSize);
+    QGraphicsRectItem* handle = new QGraphicsRectItem(0, 0, HANDLE_SIZE, HANDLE_SIZE);
     handle->setPen(QPen(Qt::blue));
     handle->setBrush(Qt::NoBrush);
 

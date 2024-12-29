@@ -1052,8 +1052,10 @@ void Core::checkLastOnline(uint32_t friendId)
 
     Tox_Err_Friend_Get_Last_Online error;
     const uint64_t lastOnline = tox_friend_get_last_online(tox.get(), friendId, &error);
-    if (PARSE_ERR(error)) {
-        emit friendLastSeenChanged(friendId, QDateTime::fromTime_t(lastOnline));
+    // Check for error and that the timnestamp is valid. tox call returns UINT64_MAX
+    // in case of error.
+    if (PARSE_ERR(error) && lastOnline != UINT64_MAX) {
+        emit friendLastSeenChanged(friendId, QDateTime::fromSecsSinceEpoch(lastOnline));
     }
 }
 

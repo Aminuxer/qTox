@@ -45,6 +45,9 @@ protected:
     bool sceneEventFilter(QGraphicsItem* watched, QEvent* event) final;
 
 private:
+    const double HANDLE_SIZE = 10.0;
+    const double MIN_RECT_SIZE = 2.0;
+
     enum State
     {
         None,

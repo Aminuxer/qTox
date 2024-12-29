@@ -21,6 +21,7 @@
 
 #include <QObject>
 #include <QWidget>
+#include <QMessageBox>
 
 #include "src/widget/tool/imessageboxmanager.h"
 
@@ -50,4 +51,5 @@ private slots:
                       bool warning = true, bool yesno = true);
     bool _askQuestion(const QString& title, const QString& msg, const QString& button1,
                       const QString& button2, bool defaultAns = false, bool warning = true);
+    void setButtonText(QMessageBox& msgBox, QMessageBox::StandardButton buttons, const QString& text);
 };

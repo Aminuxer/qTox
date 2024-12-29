@@ -20,7 +20,7 @@
 #
 ################################################################################
 
-cmake_minimum_required(VERSION 3.7.2)
+cmake_minimum_required(VERSION 3.21.1)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 option(PLATFORM_EXTENSIONS "Enable platform specific extensions, requires extra dependencies" ON)
@@ -76,17 +76,17 @@ set(CMAKE_AUTORCC ON)
 set(AUTORCC_OPTIONS -compress 9 -threshold 0)
 
 
-if(NOT Qt5Widgets_VERSION VERSION_LESS "5.9")
+#if(NOT Qt5Widgets_VERSION VERSION_LESS "5.9")
   # Drop the file modification time of source files from generated files
   # to help with reproducible builds. We do not use QFileInfo.lastModified
   # so this has no unwanted side effects. This mtime started appearing in
   # Qt 5.8. The option to force the old file format without mtime was
   # added in Qt 5.9. See https://bugreports.qt.io/browse/QTBUG-58769
-  set(AUTORCC_OPTIONS ${AUTORCC_OPTIONS} -format-version 1)
-endif()
+set(AUTORCC_OPTIONS ${AUTORCC_OPTIONS} -format-version 1)
+#endif()
 
-# Use C++11.
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+# Use C++23.
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++23")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti")
 
@@ -134,7 +134,7 @@ include(Dependencies)
 #
 ################################################################################
 
-qt5_wrap_ui(${PROJECT_NAME}_FORMS
+qt6_wrap_ui(${PROJECT_NAME}_FORMS
   src/chatlog/content/filetransferwidget.ui
   src/loginscreen.ui
   src/mainwindow.ui

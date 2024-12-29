@@ -24,7 +24,6 @@
 #include <QClipboard>
 #include <QDebug>
 #include <QDesktopServices>
-#include <QDesktopWidget>
 #include <QMessageBox>
 #include <QMouseEvent>
 #include <QPainter>
@@ -32,6 +31,7 @@
 #include <QString>
 #include <QSvgRenderer>
 #include <QWindow>
+#include <QActionGroup>
 #ifdef Q_OS_MAC
 #include <QMenuBar>
 #include <QSignalMapper>
@@ -383,12 +383,12 @@ void Widget::init()
     // initial request with the sanitized name so there is no work for us to do
 
     // keyboard shortcuts
-    auto* const quitShortcut = new QShortcut(Qt::CTRL + Qt::Key_Q, this);
+    auto* const quitShortcut = new QShortcut(Qt::CTRL | Qt::Key_Q, this);
     connect(quitShortcut, &QShortcut::activated, qApp, &QApplication::quit);
-    new QShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_Tab, this, SLOT(previousChat()));
-    new QShortcut(Qt::CTRL + Qt::Key_Tab, this, SLOT(nextChat()));
-    new QShortcut(Qt::CTRL + Qt::Key_PageUp, this, SLOT(previousChat()));
-    new QShortcut(Qt::CTRL + Qt::Key_PageDown, this, SLOT(nextChat()));
+    new QShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_Tab, this, SLOT(previousChat()));
+    new QShortcut(Qt::CTRL | Qt::Key_Tab, this, SLOT(nextChat()));
+    new QShortcut(Qt::CTRL | Qt::Key_PageUp, this, SLOT(previousChat()));
+    new QShortcut(Qt::CTRL | Qt::Key_PageDown, this, SLOT(nextChat()));
     new QShortcut(Qt::Key_F11, this, SLOT(toggleFullscreen()));
 
 #ifdef Q_OS_MAC
@@ -861,7 +861,7 @@ void Widget::setWindowTitle(const QString& title)
     } else {
         QString tmp = title;
         /// <[^>]*> Regexp to remove HTML tags, in case someone used them in title
-        QMainWindow::setWindowTitle(tmp.remove(QRegExp("<[^>]*>")) + QStringLiteral(" - ")
+        QMainWindow::setWindowTitle(tmp.remove(QRegularExpression("<[^>]*>")) + QStringLiteral(" - ")
                                     + QApplication::applicationName());
     }
 }
@@ -1450,7 +1450,7 @@ void Widget::addFriendDialog(const Friend* frnd, ContentDialog* dialog)
 #endif
     connect(friendWidget, &FriendWidget::removeFriend, this, widgetRemoveFriend);
     connect(friendWidget, &FriendWidget::middleMouseClicked, dialog,
-            [=]() { dialog->removeFriend(friendPk); });
+            [=, this]() { dialog->removeFriend(friendPk); });
     connect(friendWidget, &FriendWidget::copyFriendIdToClipboard, this,
             &Widget::copyFriendIdToClipboard);
     connect(friendWidget, &FriendWidget::newWindowOpened, this, &Widget::openNewDialog);
@@ -1459,13 +1459,13 @@ void Widget::addFriendDialog(const Friend* frnd, ContentDialog* dialog)
     // ContentDialog) to the `widget` (which shown in main widget)
     // FIXME: emit should be removed
     connect(friendWidget, &FriendWidget::contextMenuCalled, widget,
-            [=](QContextMenuEvent* event) { emit widget->contextMenuCalled(event); });
+            [=, this](QContextMenuEvent* event) { emit widget->contextMenuCalled(event); });
 
-    connect(friendWidget, &FriendWidget::chatroomWidgetClicked, [=](GenericChatroomWidget* w) {
+    connect(friendWidget, &FriendWidget::chatroomWidgetClicked, [=, this](GenericChatroomWidget* w) {
         std::ignore = w;
         emit widget->chatroomWidgetClicked(widget);
     });
-    connect(friendWidget, &FriendWidget::newWindowOpened, [=](GenericChatroomWidget* w) {
+    connect(friendWidget, &FriendWidget::newWindowOpened, [=, this](GenericChatroomWidget* w) {
         std::ignore = w;
         emit widget->newWindowOpened(widget);
     });
@@ -1505,19 +1505,19 @@ void Widget::addGroupDialog(const Group* group, ContentDialog* dialog)
     connect(groupWidget, &GroupWidget::removeGroup, this, removeGroup);
     connect(groupWidget, &GroupWidget::chatroomWidgetClicked, chatForm, &GroupChatForm::focusInput);
     connect(groupWidget, &GroupWidget::middleMouseClicked, dialog,
-            [=]() { dialog->removeGroup(groupId); });
+            [=, this]() { dialog->removeGroup(groupId); });
     connect(groupWidget, &GroupWidget::chatroomWidgetClicked, chatForm, &ChatForm::focusInput);
     connect(groupWidget, &GroupWidget::newWindowOpened, this, &Widget::openNewDialog);
 
     // Signal transmission from the created `groupWidget` (which shown in
     // ContentDialog) to the `widget` (which shown in main widget)
     // FIXME: emit should be removed
-    connect(groupWidget, &GroupWidget::chatroomWidgetClicked, [=](GenericChatroomWidget* w) {
+    connect(groupWidget, &GroupWidget::chatroomWidgetClicked, [=, this](GenericChatroomWidget* w) {
         std::ignore = w;
         emit widget->chatroomWidgetClicked(widget);
     });
 
-    connect(groupWidget, &GroupWidget::newWindowOpened, [=](GenericChatroomWidget* w) {
+    connect(groupWidget, &GroupWidget::newWindowOpened, [=, this](GenericChatroomWidget* w) {
         std::ignore = w;
         emit widget->newWindowOpened(widget);
     });
@@ -1908,7 +1908,7 @@ ContentLayout* Widget::createContentDialog(DialogType type) const
 
     dialog->setObjectName("detached");
     dialog->setLayout(contentLayoutDialog);
-    dialog->layout()->setMargin(0);
+    dialog->layout()->setContentsMargins(0, 0, 0, 0);
     dialog->layout()->setSpacing(0);
     dialog->setMinimumSize(720, 400);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -2114,7 +2114,7 @@ Group* Widget::createGroup(uint32_t groupnumber, const GroupId& groupId)
     assert(newgroup);
 
     if (enabled) {
-        connect(newgroup, &Group::userLeft, [=](const ToxPk& user){
+        connect(newgroup, &Group::userLeft, [=, this](const ToxPk& user){
             CoreAV *av = core->getAv();
             assert(av);
             av->invalidateGroupCallPeerSource(*newgroup, user);
@@ -2173,7 +2173,7 @@ Group* Widget::createGroup(uint32_t groupnumber, const GroupId& groupId)
     auto widgetRemoveGroup = static_cast<void (Widget::*)(const GroupId&)>(&Widget::removeGroup);
 #endif
     connect(widget, &GroupWidget::removeGroup, this, widgetRemoveGroup);
-    connect(widget, &GroupWidget::middleMouseClicked, this, [=]() { removeGroup(groupId); });
+    connect(widget, &GroupWidget::middleMouseClicked, this, [=, this]() { removeGroup(groupId); });
     connect(widget, &GroupWidget::chatroomWidgetClicked, form, &ChatForm::focusInput);
     connect(newgroup, &Group::titleChangedByUser, this, &Widget::titleChangedByUser);
     connect(core, &Core::usernameSet, newgroup, &Group::setSelfName);

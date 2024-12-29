@@ -120,7 +120,7 @@ FriendListWidget::FriendListWidget(const Core &core_, Widget* parent,
     setLayout(listLayout);
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     listLayout->setSpacing(0);
-    listLayout->setMargin(0);
+    listLayout->setContentsMargins(0, 0, 0, 0);
 
     mode = settings.getFriendSortingMode();
 
@@ -358,7 +358,7 @@ FriendListWidget::SortingMode FriendListWidget::getMode() const
 void FriendListWidget::addGroupWidget(GroupWidget* widget)
 {
     Group* g = widget->getGroup();
-    connect(g, &Group::titleChanged, [=](const QString& author, const QString& name) {
+    connect(g, &Group::titleChanged, [=, this](const QString& author, const QString& name) {
         std::ignore = author;
         renameGroupWidget(widget, name);
     });

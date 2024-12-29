@@ -53,7 +53,7 @@ public:
     QString getGroupPeerName(int groupId, int peerId) const override
     {
         std::ignore = groupId;
-        return QString("peer") + peerId;
+        return QString::asprintf("peer%d", peerId);
     }
 
     ToxPk getGroupPeerPk(int groupId, int peerId) const override
