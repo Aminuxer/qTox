@@ -113,7 +113,9 @@ void Core::registerCallbacks(Tox* tox)
     tox_callback_conference_peer_list_changed(tox, onGroupPeerListChange);
     tox_callback_conference_peer_name(tox, onGroupPeerNameChange);
     tox_callback_conference_title(tox, onGroupTitleChange);
-    tox_callback_friend_lossless_packet(tox, onLosslessPacket);
+    // Some messengers send publick keys and other information as losless messages
+    // currently we do not support it, though, disabling callback.
+    // tox_callback_friend_lossless_packet(tox, onLosslessPacket);
 }
 
 /**
