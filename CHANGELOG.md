@@ -6,7 +6,7 @@
 
 * Fixed the file transfer menu: now when the file is uploaded or downloaded, there is no non functional options to pause or cancel the transfer.
 * Avoid warning about opening the dummy video device.
-* Removed the code showiung user notification about unsupported lossless messages. The support should appear in the next releases.
+* Removed the code showing user notification about unsupported lossless messages. The support should appear in the next releases.
 
 #### Features
 
