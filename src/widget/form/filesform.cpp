@@ -198,7 +198,7 @@ namespace FileTransferList
         int rowIdx = 0;
 
         if (idxIt == idToRow.end()) {
-            if (files.size() >= std::numeric_limits<int>::max() - 1) {
+            if (files.size() >= SIZE_MAX) {
                 // Bug waiting to happen, but also what can we do if qt just doesn't
                 // support this many items in a list
                 qWarning("Too many file transfers rendered, ignoring");
@@ -289,7 +289,11 @@ namespace FileTransferList
             case Column::status:
                 return fileStatusString(files[row]);
             case Column::control:
-                return files[row].pauseStatus.localPaused();
+            {
+            	if (files[row].status == ToxFile::FINISHED)
+            		return FilePauseStatus::finished;
+                return files[row].pauseStatus.localPaused() ? FilePauseStatus::local_paused : FilePauseStatus::in_progress;
+            }
             case Column::invalid:
                 break;
         }
@@ -302,7 +306,7 @@ namespace FileTransferList
         std::ignore = role;
         const auto column = toFileTransferListColumn(index.column());
 
-        if (column != Column::control) {
+        if (column != Column::control || index.data().toInt() == FilePauseStatus::finished) {
             return false;
         }
 
@@ -358,18 +362,24 @@ namespace FileTransferList
             case Column::control:
             {
                 const auto data = index.data();
-                if (!data.canConvert<bool>()) {
+                if (!data.canConvert<int>()) {
                     qWarning("Unexpected control type, not rendering controls");
                     return;
                 }
-                const auto localPaused = data.toBool();
-                QPixmap pausePixmap = localPaused
-                    ? QPixmap(style.getImagePath("fileTransferInstance/arrow_black.svg", settings))
-                    : QPixmap(style.getImagePath("fileTransferInstance/pause_dark.svg", settings));
-                QApplication::style()->drawItemPixmap(painter, pauseRect(option), Qt::AlignCenter, pausePixmap);
+                const auto status = data.toInt();
+                if (status == FilePauseStatus::finished){
+                	QPixmap pausePixmap(style.getImagePath("fileTransferInstance/finished.svg", settings));
+                	QApplication::style()->drawItemPixmap(painter, pauseRect(option), Qt::AlignCenter, pausePixmap);
+                }
+                else{
+					QPixmap pausePixmap = status == FilePauseStatus::local_paused
+						? QPixmap(style.getImagePath("fileTransferInstance/arrow_black.svg", settings))
+						: QPixmap(style.getImagePath("fileTransferInstance/pause_dark.svg", settings));
+					QApplication::style()->drawItemPixmap(painter, pauseRect(option), Qt::AlignCenter, pausePixmap);
 
-                QPixmap stopPixmap(style.getImagePath("fileTransferInstance/no_dark.svg", settings));
-                QApplication::style()->drawItemPixmap(painter, stopRect(option), Qt::AlignCenter, stopPixmap);
+					QPixmap stopPixmap(style.getImagePath("fileTransferInstance/no_dark.svg", settings));
+					QApplication::style()->drawItemPixmap(painter, stopRect(option), Qt::AlignCenter, stopPixmap);
+                }
                 return;
             }
             case Column::fileName:

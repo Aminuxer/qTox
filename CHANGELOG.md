@@ -1,3 +1,19 @@
+<a name="v1.18.0"></a>
+# v. 1.18.0 (Unreleased)
+
+
+#### Bug Fixes
+
+* Fixed the file transfer menu: now when the file is uploaded or downloaded, there is no non functional options to pause or cancel the transfer.
+* Avoid warning about opening the dummy video device.
+* Removed the code showiung user notification about unsupported lossless messages. The support should appear in the next releases.
+
+#### Features
+
+* The code was ported to C++ 23 standard and Qt 6.
+
+
+
 <a name="v1.17.7"></a>
 ## v1.17.7 (2024-11-28)
 
@@ -43,7 +59,7 @@
 
 
 <a name="v1.17.4"></a>
-## v1.17.14 (2021-12-14)
+## v1.17.4 (2021-12-14)
 
 This release only updates dependency versions including toktok/c-toxcore to v0.2.13 to address CVE-2021-44847. No code changes.
 
