@@ -585,13 +585,13 @@ void Core::onGroupTitleChange(Tox* tox, uint32_t groupId, uint32_t peerId, const
 }
 
 /**
- * @brief Handling of custom lossless packets received by toxcore. Currently only used to forward toxext packets to CoreExt
+ * @brief Handling of custom lossless packets received by toxcore. Currently this callback is disabled.
  */
 void Core::onLosslessPacket(Tox* tox, uint32_t friendId,
                             const uint8_t* data, size_t length, void* vCore)
 {
 	// We do not support LosLessPackages yet, the old support is removed due to security
-	    // issues in non supported code.
+    // issues in non supported code.
     std::ignore = tox;
     std::ignore = data;
     std::ignore = length;

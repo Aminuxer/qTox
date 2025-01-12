@@ -4,7 +4,8 @@ QPushButton
     background-color: @themeMediumDark;
     border: none;
     border-radius: 6px;
-    width: 30px;
+    text-align:center;
+    width: 20px;
     height: 40px;
 }
 
