@@ -136,8 +136,8 @@ MatchingUri stripSurroundingChars(QStringView wrappedUri, const int startOfBareU
         {
             const int openingCharLength = surroundChars.first.length();
             const int closingCharLength = surroundChars.second.length();
-            if (surroundChars.first == wrappedUri.slice(curValidationStartPos, openingCharLength) &&
-                surroundChars.second == wrappedUri.slice(curValidationEndPos - closingCharLength, closingCharLength)) {
+            if (surroundChars.first == wrappedUri.sliced(curValidationStartPos, openingCharLength) &&
+                surroundChars.second == wrappedUri.sliced(curValidationEndPos - closingCharLength, closingCharLength)) {
                 curValidationStartPos += openingCharLength;
                 curValidationEndPos -= closingCharLength;
                 matchFound = true;
