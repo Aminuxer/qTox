@@ -50,6 +50,7 @@ public:
 private slots:
     void onSmileyPackChanged();
     void cleanupIconsCache();
+    std::function<void()> getLoadCallable(const QString& filename);
 
 private:
     bool load(const QString& filename);

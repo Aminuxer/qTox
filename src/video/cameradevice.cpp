@@ -19,7 +19,6 @@
 
 #include <QApplication>
 #include <QDebug>
-#include <QDesktopWidget>
 #include <QScreen>
 extern "C" {
 #pragma GCC diagnostic push

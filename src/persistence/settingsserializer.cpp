@@ -127,7 +127,7 @@ void SettingsSerializer::endGroup()
 int SettingsSerializer::beginReadArray(const QString& prefix)
 {
     auto index = std::find_if(std::begin(arrays), std::end(arrays),
-                              [=](const Array& a) { return a.name == prefix; });
+                              [=, this](const Array& a) { return a.name == prefix; });
 
     if (index != std::end(arrays)) {
         array = static_cast<int>(index - std::begin(arrays));
@@ -144,7 +144,7 @@ int SettingsSerializer::beginReadArray(const QString& prefix)
 void SettingsSerializer::beginWriteArray(const QString& prefix, int size)
 {
     auto index = std::find_if(std::begin(arrays), std::end(arrays),
-                              [=](const Array& a) { return a.name == prefix; });
+                              [=, this](const Array& a) { return a.name == prefix; });
 
     if (index != std::end(arrays)) {
         array = static_cast<int>(index - std::begin(arrays));
@@ -261,7 +261,8 @@ void SettingsSerializer::save()
     stream.setVersion(QDataStream::Qt_5_0);
 
     // prevent signed overflow and the associated warning
-    int numGroups = std::max(0, groups.size());
+    qsizetype zero = 0;
+    int numGroups = std::max(zero, groups.size());
     for (int g = -1; g < numGroups; ++g) {
         // Save the group name, if any
         if (g != -1) {
@@ -455,7 +456,7 @@ void SettingsSerializer::readIni()
             continue;
         if (v.key != "size")
             continue;
-        if (!v.value.canConvert(QVariant::Int))
+        if (!v.value.canConvert(QMetaType(QMetaType::Int)))
             continue;
 
         Array a;
@@ -549,7 +550,7 @@ void SettingsSerializer::removeGroup(int group_)
 
 void SettingsSerializer::writePackedVariant(QDataStream& stream, const QVariant& v)
 {
-    assert(v.canConvert(QVariant::String));
+    assert(v.canConvert(QMetaType(QMetaType::QString)));
     QString str = v.toString();
     if (str == "true")
         writeStream(stream, QString("1"));

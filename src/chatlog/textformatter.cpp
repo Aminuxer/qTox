@@ -125,7 +125,7 @@ const QChar URI_ENDING_CHARS[] = {
  * @param QRegularExpressionMatch of a word containing a URI
  * @return MatchingUri containing info on the stripped URI
  */
-MatchingUri stripSurroundingChars(const QStringRef wrappedUri, const int startOfBareUri)
+MatchingUri stripSurroundingChars(QStringView wrappedUri, const int startOfBareUri)
 {
     bool matchFound;
     int curValidationStartPos = 0;
@@ -136,8 +136,10 @@ MatchingUri stripSurroundingChars(const QStringRef wrappedUri, const int startOf
         {
             const int openingCharLength = surroundChars.first.length();
             const int closingCharLength = surroundChars.second.length();
-            if (surroundChars.first == wrappedUri.mid(curValidationStartPos, openingCharLength) &&
-                surroundChars.second == wrappedUri.mid(curValidationEndPos - closingCharLength, closingCharLength)) {
+            if (curValidationStartPos + openingCharLength <= wrappedUri.size() &&
+                surroundChars.first == wrappedUri.sliced(curValidationStartPos, openingCharLength) &&
+                curValidationEndPos - closingCharLength > 0 && curValidationEndPos - closingCharLength + closingCharLength <= wrappedUri.size() &&
+                surroundChars.second == wrappedUri.sliced(curValidationEndPos - closingCharLength, closingCharLength)) {
                 curValidationStartPos += openingCharLength;
                 curValidationEndPos -= closingCharLength;
                 matchFound = true;
@@ -182,7 +184,7 @@ QString highlight(const QString& message, const QVector<QRegularExpression>& pat
             const QRegularExpressionMatch match = iter.next();
             const int uriWithWrapMatch{0};
             const int uriWithoutWrapMatch{1};
-            MatchingUri matchUri = stripSurroundingChars(match.capturedRef(uriWithWrapMatch),
+            MatchingUri matchUri = stripSurroundingChars(match.capturedView(uriWithWrapMatch),
                    match.capturedStart(uriWithoutWrapMatch) - match.capturedStart(uriWithWrapMatch));
             if (!matchUri.valid) {
                 continue;

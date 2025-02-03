@@ -64,6 +64,14 @@ namespace FileTransferList
         invalid,
     };
 
+    // File status, showing if the file is local paused or completed
+    // to update buttons.
+    enum FilePauseStatus {
+        in_progress = 0,
+    	local_paused = 1,
+	    finished = 2
+    };
+
     EditorAction toEditorAction(int in);
 
     class Model : public QAbstractTableModel

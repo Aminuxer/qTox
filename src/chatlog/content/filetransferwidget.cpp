@@ -31,7 +31,6 @@
 #include <QBuffer>
 #include <QDebug>
 #include <QDesktopServices>
-#include <QDesktopWidget>
 #include <QFile>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -468,11 +467,11 @@ void FileTransferWidget::handleButton(QPushButton* btn)
         } else if (btn->objectName() == "resume") {
             coreFile.pauseResumeFile(fileInfo.friendId, fileInfo.fileNum);
         } else if (btn->objectName() == "accept") {
+        	QString acceptPath = QFileInfo(settings.getGlobalAutoAcceptDir(), fileInfo.fileName).absoluteFilePath();
             QString path =
                 QFileDialog::getSaveFileName(Q_NULLPTR,
                                              tr("Save a file", "Title of the file saving dialog"),
-                                             settings.getGlobalAutoAcceptDir() + "/"
-                                                 + fileInfo.fileName);
+											 acceptPath);
             acceptTransfer(path);
         }
     }

@@ -54,7 +54,7 @@
 #include <QtGlobal>
 
 #ifdef SPELL_CHECKING
-#include <KF5/SonnetUi/sonnet/spellcheckdecorator.h>
+#include <KF6/SonnetUi/sonnet/spellcheckdecorator.h>
 #endif
 
 /**
@@ -188,7 +188,7 @@ GenericChatForm::GenericChatForm(const Core& core_, const Chat* chat, IChatLog& 
     fileLayout->addWidget(screenshotButton);
     fileLayout->setContentsMargins(0, 0, 0, 0);
     fileLayout->setSpacing(0);
-    fileLayout->setMargin(0);
+    fileLayout->setContentsMargins(0, 0, 0, 0);
 
     msgEdit->setFixedHeight(MESSAGE_EDIT_HEIGHT);
     msgEdit->setFrameStyle(QFrame::NoFrame);
@@ -199,7 +199,7 @@ GenericChatForm::GenericChatForm(const Core& core_, const Chat* chat, IChatLog& 
 
     QVBoxLayout* mainLayout = new QVBoxLayout();
     mainLayout->addWidget(bodySplitter);
-    mainLayout->setMargin(0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
 
     setLayout(mainLayout);
 
@@ -221,19 +221,19 @@ GenericChatForm::GenericChatForm(const Core& core_, const Chat* chat, IChatLog& 
     contentLayout->addWidget(chatWidget);
     contentLayout->addLayout(mainFootLayout);
 
-    quoteAction = menu.addAction(QIcon(), QString(), this, SLOT(quoteSelectedText()),
-                                 QKeySequence(Qt::ALT + Qt::Key_Q));
+    quoteAction = menu.addAction(QIcon(), QString(), QKeySequence(Qt::ALT | Qt::Key_Q),
+    		this, SLOT(quoteSelectedText()));
     addAction(quoteAction);
     menu.addSeparator();
 
-    goToCurrentDateAction = menu.addAction(QIcon(), QString(), this, SLOT(goToCurrentDate()),
-                                  QKeySequence(Qt::CTRL + Qt::Key_G));
+    goToCurrentDateAction = menu.addAction(QIcon(), QString(), QKeySequence(Qt::CTRL | Qt::Key_G),
+    		this, SLOT(goToCurrentDate()));
     addAction(goToCurrentDateAction);
 
     menu.addSeparator();
 
-    searchAction = menu.addAction(QIcon(), QString(), this, SLOT(searchFormShow()),
-                                  QKeySequence(Qt::CTRL + Qt::Key_F));
+    searchAction = menu.addAction(QIcon(), QString(), QKeySequence(Qt::CTRL | Qt::Key_F),
+            this, SLOT(searchFormShow()));
     addAction(searchAction);
 
     menu.addSeparator();
@@ -241,9 +241,8 @@ GenericChatForm::GenericChatForm(const Core& core_, const Chat* chat, IChatLog& 
     menu.addActions(chatWidget->actions());
     menu.addSeparator();
 
-    clearAction = menu.addAction(QIcon::fromTheme("edit-clear"), QString(),
-                                 this, SLOT(clearChatArea()),
-                                 QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_L));
+    clearAction = menu.addAction(QIcon::fromTheme("edit-clear"), QString(), QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_L),
+            this, SLOT(clearChatArea()));
     addAction(clearAction);
 
     copyLinkAction = menu.addAction(QIcon(), QString(), this, SLOT(copyLink()));
@@ -643,7 +642,7 @@ void GenericChatForm::quoteSelectedText()
     QString quote = selectedText;
 
     quote.insert(0, "> ");
-    quote.replace(QRegExp(QString("\r\n|[\r\n\u2028\u2029]")), QString("\n> "));
+    quote.replace(QRegularExpression(QString("\r\n|[\r\n\u2028\u2029]")), QString("\n> "));
     quote.append("\n");
 
     msgEdit->append(quote);

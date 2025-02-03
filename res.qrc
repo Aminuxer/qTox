@@ -107,6 +107,7 @@
         <file>themes/dark/fileTransferInstance/dir.svg</file>
         <file>themes/dark/fileTransferInstance/arrow_white.svg</file>
         <file>themes/dark/fileTransferInstance/arrow_black.svg</file>
+        <file>themes/dark/fileTransferInstance/finished.svg</file>
         <file>themes/dark/fileTransferInstance/browse.svg</file>
         <file>themes/dark/fileTransferInstance/filetransferWidget.css</file>
         <file>themes/dark/genericChatForm/genericChatForm.css</file>
@@ -173,6 +174,7 @@
         <file>themes/default/fileTransferInstance/yes.svg</file>
         <file>themes/default/fileTransferInstance/dir.svg</file>
         <file>themes/default/fileTransferInstance/arrow_white.svg</file>
+        <file>themes/default/fileTransferInstance/finished.svg</file>
         <file>themes/default/fileTransferInstance/arrow_black.svg</file>
         <file>themes/default/fileTransferInstance/browse.svg</file>
         <file>themes/default/fileTransferInstance/filetransferWidget.css</file>

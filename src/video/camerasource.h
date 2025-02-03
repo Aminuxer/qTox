@@ -61,6 +61,8 @@ private slots:
     void closeDevice();
 
 private:
+    static const QString NONE;
+
     QFuture<void> streamFuture;
     QThread* deviceThread;
 
@@ -79,3 +81,4 @@ private:
     std::atomic_int subscriptions;
     Settings& settings;
 };
+

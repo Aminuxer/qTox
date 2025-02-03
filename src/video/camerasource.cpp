@@ -50,6 +50,7 @@ extern "C" {
  * open but the device closed if there are zero subscribers.
  */
 
+const QString CameraSource::NONE = "none";
 /**
  * @var QVector<std::weak_ptr<VideoFrame>> CameraSource::freelist
  * @brief Frames that need freeing before we can safely close the device
@@ -92,7 +93,7 @@ extern "C" {
 
 CameraSource::CameraSource(Settings& settings_)
     : deviceThread{new QThread}
-    , deviceName{"none"}
+    , deviceName{CameraSource::NONE}
     , device{nullptr}
     , mode(VideoMode())
     // clang-format off
@@ -166,7 +167,7 @@ void CameraSource::setupDevice(const QString& deviceName_, const VideoMode& mode
 
     deviceName = deviceName_;
     mode = mode_;
-    isNone_ = (deviceName == "none");
+    isNone_ = (deviceName == CameraSource::NONE);
 
     if (subscriptions && !isNone_) {
         openDevice();
@@ -248,7 +249,7 @@ void CameraSource::openDevice()
     }
 
     QWriteLocker locker{&streamMutex};
-    if (subscriptions == 0) {
+    if (subscriptions == 0 || QString::compare(deviceName, CameraSource::NONE, Qt::CaseInsensitive) == 0) {
         return;
     }
 
@@ -264,7 +265,7 @@ void CameraSource::openDevice()
     device = CameraDevice::open(deviceName, mode);
 
     if (!device) {
-        qWarning() << "Failed to open device!";
+        qWarning() << "Failed to open device" << deviceName << "!";
         emit openFailed();
         return;
     }
@@ -391,7 +392,7 @@ void CameraSource::closeDevice()
  */
 void CameraSource::stream()
 {
-    auto streamLoop = [=]() {
+    auto streamLoop = [=, this]() {
         AVPacket packet;
         if (av_read_frame(device->context, &packet) != 0) {
             return;

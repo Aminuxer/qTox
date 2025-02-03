@@ -68,17 +68,17 @@ const QLatin1String BuiltinThemeDefaultPath{":themes/default/"};
 const QLatin1String BuiltinThemeDarkPath{":themes/dark/"};
 
 // helper functions
-QFont appFont(int pixelSize, int weight)
+QFont appFont(int pixelSize, QFont::Weight weight)
 {
     QFont font;
-    font.setPixelSize(pixelSize);
     font.setWeight(weight);
+    font.setPixelSize(pixelSize);
     return font;
 }
 
 QString qssifyFont(QFont font)
 {
-    return QString("%1 %2px \"%3\"").arg(font.weight() * 8).arg(font.pixelSize()).arg(font.family());
+	return QString("%1 %2px \"%3\"").arg(font.weight()).arg(font.pixelSize()).arg(font.family());
 }
 
 using MainTheme = Style::MainTheme;

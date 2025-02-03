@@ -110,7 +110,7 @@ SmileyPack::SmileyPack(ISmileySettings& settings_)
     , settings{settings_}
 {
     loadingMutex.lock();
-    QtConcurrent::run(this, &SmileyPack::load, settings.getSmileyPack());
+    QThreadPool::globalInstance()->start(this->getLoadCallable(settings.getSmileyPack()));
     settings.connectTo_smileyPackChanged(this,
         [&](const QString&) { onSmileyPackChanged(); });
     connect(cleanupTimer, &QTimer::timeout, this, &SmileyPack::cleanupIconsCache);
@@ -346,8 +346,16 @@ std::shared_ptr<QIcon> SmileyPack::getAsIcon(const QString& emoticon) const
     return icon;
 }
 
+std::function<void()> SmileyPack::getLoadCallable(const QString& filename){
+	return [this, filename]{
+		this->load(filename);
+	};
+}
+
 void SmileyPack::onSmileyPackChanged()
 {
     loadingMutex.lock();
-    QtConcurrent::run(this, &SmileyPack::load, settings.getSmileyPack());
+
+    QThreadPool::globalInstance()->start(this->getLoadCallable(settings.getSmileyPack()));
 }
+

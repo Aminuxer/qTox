@@ -69,7 +69,7 @@ void logMessageHandler(QtMsgType type, const QMessageLogContext& ctxt, const QSt
         return;
     }
 
-    QRegExp snoreFilter{QStringLiteral("Snore::Notification.*was already closed")};
+    QRegularExpression snoreFilter{QStringLiteral("Snore::Notification.*was already closed")};
     if (type == QtWarningMsg
         && msg.contains(snoreFilter))
     {
@@ -172,10 +172,6 @@ AppManager::AppManager(int& argc, char** argv)
 
 void AppManager::preConstructionInitialization()
 {
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
-    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
-#endif
     qInstallMessageHandler(logMessageHandler);
 }
 

@@ -69,7 +69,7 @@ FriendWidget::FriendWidget(std::shared_ptr<FriendChatroom> chatroom_, bool compa
 {
     avatar->setPixmap(QPixmap(":/img/contact.svg"));
     statusPic.setPixmap(QPixmap(Status::getIconPath(Status::Status::Offline)));
-    statusPic.setMargin(3);
+    statusPic.setContentsMargins(3, 3, 3, 3);
 
     auto frnd = chatroom->getFriend();
     nameLabel->setText(frnd->getDisplayedName());
@@ -111,7 +111,7 @@ void FriendWidget::onContextMenuCalled(QContextMenuEvent* event)
 
     if (chatroom->possibleToOpenInNewWindow()) {
         const auto openChatWindow = menu.addAction(tr("Open chat in new window"));
-        connect(openChatWindow, &QAction::triggered, [=]() { emit newWindowOpened(this); });
+        connect(openChatWindow, &QAction::triggered, [=, this]() { emit newWindowOpened(this); });
     }
 
     if (chatroom->canBeRemovedFromWindow()) {
@@ -129,7 +129,7 @@ void FriendWidget::onContextMenuCalled(QContextMenuEvent* event)
 
     for (const auto& group : chatroom->getGroups()) {
         const auto groupAction = inviteMenu->addAction(tr("Invite to group '%1'").arg(group.name));
-        connect(groupAction, &QAction::triggered, [=]() { chatroom->inviteFriend(group.group); });
+        connect(groupAction, &QAction::triggered, [=, this]() { chatroom->inviteFriend(group.group); });
     }
 
     const auto circleId = chatroom->getCircleId();
@@ -150,7 +150,7 @@ void FriendWidget::onContextMenuCalled(QContextMenuEvent* event)
 
     for (const auto& circle : chatroom->getOtherCircles()) {
         QAction* action = new QAction(tr("Move to circle \"%1\"").arg(circle.name), circleMenu);
-        connect(action, &QAction::triggered, [=]() { moveToCircle(circle.circleId); });
+        connect(action, &QAction::triggered, [=, this]() { moveToCircle(circle.circleId); });
         circleMenu->addAction(action);
     }
 
@@ -169,7 +169,7 @@ void FriendWidget::onContextMenuCalled(QContextMenuEvent* event)
         const auto friendPk = chatroom->getFriend()->getPublicKey();
         const auto removeAction =
             menu.addAction(tr("Remove friend", "Menu to remove the friend from the friend list"));
-        connect(removeAction, &QAction::triggered, this, [=]() { emit removeFriend(friendPk); },
+        connect(removeAction, &QAction::triggered, this, [=, this]() { emit removeFriend(friendPk); },
                 Qt::QueuedConnection);
     }
 
@@ -331,7 +331,8 @@ void FriendWidget::updateStatusLight()
         emit updateFriendActivity(*frnd);
     }
 
-    statusPic.setMargin(event ? 1 : 3);
+    int margin = event ? 1 : 3;
+    statusPic.setContentsMargins(margin, margin, margin, margin);
 }
 
 QString FriendWidget::getStatusString() const

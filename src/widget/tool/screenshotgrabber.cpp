@@ -21,7 +21,6 @@
 
 #include <QApplication>
 #include <QDebug>
-#include <QDesktopWidget>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsRectItem>
 #include <QGraphicsSceneMouseEvent>
@@ -228,7 +227,7 @@ QPixmap ScreenshotGrabber::grabScreen()
     QRect rec = screen->virtualGeometry();
 
     // Multiply by devicePixelRatio to get actual desktop size
-    return screen->grabWindow(QApplication::desktop()->winId(), rec.x() * pixRatio,
+    return screen->grabWindow(QApplication::activeWindow()->winId(), rec.x() * pixRatio,
                               rec.y() * pixRatio, rec.width() * pixRatio, rec.height() * pixRatio);
 }
 

@@ -49,7 +49,7 @@ GroupWidget::GroupWidget(std::shared_ptr<GroupChatroom> chatroom_, bool compact_
 {
     avatar->setPixmap(Style::scaleSvgImage(":img/group.svg", avatar->width(), avatar->height()));
     statusPic.setPixmap(QPixmap(Status::getIconPath(Status::Status::Online)));
-    statusPic.setMargin(3);
+    statusPic.setContentsMargins(3, 3, 3, 3);
 
     Group* g = chatroom->getGroup();
     nameLabel->setText(g->getName());
@@ -173,7 +173,8 @@ void GroupWidget::updateStatusLight()
 
     const bool event = g->getEventFlag();
     statusPic.setPixmap(QPixmap(Status::getIconPath(Status::Status::Online, event)));
-    statusPic.setMargin(event ? 1 : 3);
+    int margin = event ? 1 : 3;
+    statusPic.setContentsMargins(margin, margin, margin, margin);
 }
 
 QString GroupWidget::getStatusString() const

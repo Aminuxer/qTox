@@ -111,7 +111,6 @@ void Settings::loadGlobal()
     qDebug() << "Loading settings from " + filePath;
 
     QSettings s(filePath, QSettings::IniFormat);
-    s.setIniCodec("UTF-8");
 
     s.beginGroup("Version");
     {
@@ -620,7 +619,6 @@ void Settings::saveGlobal()
     qDebug() << "Saving global settings at " + path;
 
     QSettings s(path, QSettings::IniFormat);
-    s.setIniCodec("UTF-8");
 
     s.clear();
 
@@ -2208,7 +2206,6 @@ void Settings::createPersonal(const QString& basename) const
     qDebug() << "Creating new profile settings in " << path;
 
     QSettings ps(path, QSettings::IniFormat);
-    ps.setIniCodec("UTF-8");
     ps.beginGroup("Friends");
     ps.beginWriteArray("Friend", 0);
     ps.endArray();

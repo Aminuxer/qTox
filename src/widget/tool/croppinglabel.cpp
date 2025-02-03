@@ -22,6 +22,7 @@
 #include <QLineEdit>
 #include <QResizeEvent>
 #include <QTextDocument>
+#include <QRegularExpression>
 
 CroppingLabel::CroppingLabel(QWidget* parent)
     : QLabel(parent)
@@ -184,7 +185,7 @@ void CroppingLabel::minimizeMaximumWidth()
 void CroppingLabel::editingFinished()
 {
     hideTextEdit();
-    QString newText = textEdit->text().trimmed().remove(QRegExp("[\\t\\n\\v\\f\\r\\x0000]"));
+    QString newText = textEdit->text().trimmed().remove(QRegularExpression("[\\t\\n\\v\\f\\r\\x0000]"));
 
     if (origText != newText)
         emit editFinished(textEdit->text());
