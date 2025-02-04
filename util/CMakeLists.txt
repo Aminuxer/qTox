@@ -14,15 +14,16 @@
 #   You should have received a copy of the GNU General Public License
 #   along with qTox.  If not, see <http://www.gnu.org/licenses/>
 
-
-add_library(util_library STATIC
-    "include/util/compatiblerecursivemutex.h"
-    "include/util/interface.h"
-    "include/util/strongtype.h"
-    "include/util/display.h"
-    "src/display.cpp"
-    "include/util/toxcoreerrorparser.h"
-    "src/toxcoreerrorparser.cpp")
+add_library(
+  util_library STATIC
+  include/util/algorithm.h
+  src/algorithm.cpp
+  include/util/interface.h
+  include/util/strongtype.h
+  include/util/display.h
+  src/display.cpp
+  include/util/toxcoreerrorparser.h
+  src/toxcoreerrorparser.cpp)
 
 # We need this directory, and users of our library will need it too
 target_include_directories(util_library PUBLIC include/)

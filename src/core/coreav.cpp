@@ -27,6 +27,7 @@
 #include "src/video/corevideosource.h"
 #include "src/video/videoframe.h"
 #include "util/compatiblerecursivemutex.h"
+#include "util/algorithm.h"
 #include "util/toxcoreerrorparser.h"
 
 #include <QCoreApplication>
@@ -166,13 +167,9 @@ IAudioControl* CoreAV::getAudio()
 
 CoreAV::~CoreAV()
 {
-    /* Gracefully leave calls and group calls to avoid deadlocks in destructor */
-    for (const auto& call : calls) {
-        cancelCall(call.first);
-    }
-    for (const auto& call : groupCalls) {
-        leaveGroupCall(call.first);
-    }
+    /* Gracefully leave calls and conference calls to avoid deadlocks in destructor */
+    forEachKey(calls, [this](uint32_t callId) { cancelCall(callId); });
+    forEachKey(groupCalls, [this](int callId) { leaveGroupCall(callId); });
 
     assert(calls.empty());
     assert(groupCalls.empty());
