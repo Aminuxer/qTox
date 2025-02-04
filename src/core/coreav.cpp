@@ -169,6 +169,7 @@ CoreAV::~CoreAV()
 {
     /* Gracefully leave calls and conference calls to avoid deadlocks in destructor */
     forEachKey(calls, [this](uint32_t callId) { cancelCall(callId); });
+    forEachKey(groupCalls, [this](int callId) { leaveGroupCall(callId); });
 
     assert(calls.empty());
     assert(groupCalls.empty());
