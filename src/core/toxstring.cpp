@@ -61,19 +61,9 @@ ToxString::ToxString(const uint8_t* text, size_t length)
     // Some clients does not send the correct string end. Starting from  Qt6 we need to
     // make sure that we trim the string to its actual size.
     size_t actualLength = 0;
-    bool zeroTerminated = false;
     for (actualLength=0; actualLength<length; actualLength++){
-    	if(*(text + actualLength) == 0)
-    	{
-    		zeroTerminated = true;
-    		break;
-    	}
-    }
-    if (zeroTerminated)
-    {
-    	// Since \0 is considered valid char when we convert QByteArray
-    	// to QString, we need to backtrack here.
-    	actualLength--;
+        if(*(text + actualLength) == 0)
+            break;
     }
     string = QByteArray(reinterpret_cast<const char*>(text), actualLength);
 }
